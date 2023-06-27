@@ -4,13 +4,15 @@ using UnityEngine;
 
 public class FreeCamera : MonoBehaviour
 {
+    [SerializeField] private Camera _freecamera;
+    [SerializeField] private Rigidbody _cameraRig;
+
     [SerializeField] private float _xSensitivity = 5f;
     [SerializeField] private float _ySensitivity = 5f;
     [SerializeField] private float _verticalMaxAngle = 80f;
 
     [SerializeField] private float _horizontalSpeed = 5f;
     [SerializeField] private float _verticalSpeed = 15f;
-    [SerializeField] private Rigidbody _freeCameraRigidbody;
 
     private float _xRotation;
     private float _yRotation;
@@ -29,7 +31,8 @@ public class FreeCamera : MonoBehaviour
         _yRotation += mouseX;
         _xRotation -= mouseY;
         _xRotation = Mathf.Clamp(_xRotation, -_verticalMaxAngle, _verticalMaxAngle);
-        transform.rotation = Quaternion.Euler(_xRotation, _yRotation, 0f);
+        _freecamera.transform.rotation = Quaternion.Euler(_xRotation, _yRotation, 0f);
+        transform.rotation = Quaternion.Euler(0f, _yRotation, 0f);
 
         float x = Input.GetAxisRaw("Horizontal");
         float z = Input.GetAxisRaw("Vertical");
@@ -45,8 +48,8 @@ public class FreeCamera : MonoBehaviour
         else
             y = 0f;
 
-        Vector3 forceToAdd = transform.forward * z * _verticalSpeed + transform.right * x * _horizontalSpeed + transform.up * y * _verticalSpeed;
+        Vector3 forceToAdd = transform.forward * z * _horizontalSpeed + transform.right * x * _horizontalSpeed + transform.up * y * _verticalSpeed;
 
-        _freeCameraRigidbody.AddForce(forceToAdd);
+        _cameraRig.AddForce(forceToAdd);
     }
 }
