@@ -11,6 +11,7 @@ public class PlayerInputHandler : MonoBehaviour
 
     public Vector2 MoveInput { get; private set; }
     public Vector2 LookInput { get; private set; }
+    public event Action JumpInput;
 
     private void OnEnable()
     {
@@ -32,6 +33,7 @@ public class PlayerInputHandler : MonoBehaviour
     {
         _playerControls.Gameplay.Move.performed += ctx => OnMoveInput(ctx);
         _playerControls.Gameplay.Look.performed += ctx => OnLookInput(ctx);
+        _playerControls.Gameplay.Jump.performed += ctx => OnJumpInput(ctx);
     }
 
     private void OnMoveInput(InputAction.CallbackContext ctx)
@@ -43,4 +45,10 @@ public class PlayerInputHandler : MonoBehaviour
     {
         LookInput = ctx.ReadValue<Vector2>();
     }
+
+    private void OnJumpInput(InputAction.CallbackContext ctx)
+    {
+        JumpInput?.Invoke();
+    }
+
 }
