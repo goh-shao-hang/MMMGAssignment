@@ -23,6 +23,7 @@ namespace GameCells.Player
         [SerializeField] private float _rotationSpeed = 15f;
         [SerializeField] private float _jumpSpeed = 15f;
         [SerializeField] private float _maxSlopeAngle = 45f;
+        //[]
         [SerializeField] private float _groundDrag = 3f;
         [SerializeField] private float _airDrag = 0f;
 
@@ -73,30 +74,50 @@ namespace GameCells.Player
                 _playerRigidbody.drag = _airDrag;
                 _targetVelocity = _targetDirection * _airMoveSpeed;
 
-                float align = -(Vector3.Dot(_targetVelocity.normalized, _playerRigidbody.velocity.normalized) / _targetVelocity.normalized.sqrMagnitude);
+                /*float align = -(Vector3.Dot(_targetVelocity.normalized, _playerRigidbody.velocity.normalized) / _targetVelocity.normalized.sqrMagnitude);
                 if (float.IsNaN(align))
                 {
                     align = 0f;
                 }
-                align = Mathf.Clamp01(align);
+                align = Mathf.Clamp01(align) + 1;
 
-                _targetVelocity = _targetVelocity + (_targetVelocity * _airRotateCompensationMultiplier * align);
+                Debug.Log(Mathf.Lerp(1, _airRotateCompensationMultiplier, align));
+                _targetVelocity = _targetVelocity * Mathf.Lerp(1, _airRotateCompensationMultiplier, align);
+
+                _targetVelocity = _targetVelocity * Mathf.Lerp(1, _airRotateCompensationMultiplier, align);*/
             }
 
             _targetVelocity.y = 0f;
 
             _playerRigidbody.AddForce(_targetVelocity);
 
-            if (_isOnSlope && _playerRigidbody.velocity.y < 0) //Stop gravity when on slope to prevent sliding down slopes
+            if (_isOnSlope) //Stop gravity when on slope to prevent sliding down slopes
             {
                 Vector3 slopeNormal = _slopeCheck.HitInfo().normal;
-                    Debug.Log(Vector3.Angle(slopeNormal, Vector3.up));
-                if (_moveInput != Vector3.zero && Vector3.Angle(_targetDirection.normalized, slopeNormal) < 90f) //Moving down slope. Adding force to avoid bump.
-                    _playerRigidbody.AddForce(new Vector3(0f, -15f, 0f));
-                else if (Vector3.Angle(slopeNormal, Vector3.up) < _maxSlopeAngle)
-                    _playerRigidbody.useGravity = false;
-                else
+
+                Debug.Log(Vector3.Angle(slopeNormal, Vector3.up));
+                if (Vector3.Angle(slopeNormal, Vector3.up) > _maxSlopeAngle) //Too steep, push player down
+                {
+                    _playerRigidbody.AddForce(new Vector3(0f, -30f, 0f));
                     _playerRigidbody.useGravity = true;
+                }
+                else if (_playerRigidbody.velocity.y < 0)
+                {
+                    if (_moveInput != Vector3.zero && Vector3.Angle(_targetDirection.normalized, slopeNormal) < 90f) //Moving down slope. Adding force to avoid bump.
+                    {
+                        _playerRigidbody.AddForce(new Vector3(0f, -30f, 0f));
+                        _playerRigidbody.useGravity = true;
+                    }
+                    else if (Vector3.Angle(slopeNormal, Vector3.up) < _maxSlopeAngle)
+                    {
+                        _playerRigidbody.useGravity = false;
+                    }
+                    else
+                    {
+                        _playerRigidbody.AddForce(new Vector3(0f, -30f, 0f));
+                        _playerRigidbody.useGravity = true;
+                    }
+                }
             }
             else
                 _playerRigidbody.useGravity = true;
