@@ -9,11 +9,12 @@ namespace GameCells.Modules
         [Header("Settings")]
         [SerializeField] private Vector3 _raycastDirection = Vector3.down;
         [SerializeField] private float _raycastDistance;
+        [SerializeField] private bool _followPlayerRotation = false;
         [SerializeField] private LayerMask _targetLayerMask;
 
         private RaycastHit _hitInfo;
 
-        public override bool Hit => Physics.Raycast(transform.position, _raycastDirection, _raycastDistance, _targetLayerMask);
+        public override bool Hit => Physics.Raycast(transform.position, _followPlayerRotation ? transform.TransformDirection(_raycastDirection) : _raycastDirection, _raycastDistance, _targetLayerMask);
 
         public RaycastHit HitInfo()
         {
@@ -23,7 +24,9 @@ namespace GameCells.Modules
 
         protected override void OnDrawGizmos()
         {
-            Gizmos.DrawLine(transform.position, transform.position + _raycastDirection * _raycastDistance);
+            base.OnDrawGizmos();
+
+            Gizmos.DrawLine(transform.position, transform.position + (_followPlayerRotation ? transform.TransformDirection(_raycastDirection) : _raycastDirection) * _raycastDistance);
         }
 
     }

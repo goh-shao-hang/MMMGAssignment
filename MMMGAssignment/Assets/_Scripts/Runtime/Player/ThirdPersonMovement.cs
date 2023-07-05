@@ -14,16 +14,19 @@ namespace GameCells.Player
         [SerializeField] private Animator _playerAnimator;
         [SerializeField] private CollisionCheckModule _groundCheck;
         [SerializeField] private Raycast3DModule _slopeCheck;
+        [SerializeField] private Raycast3DModule _lowerStepCheck;
+        [SerializeField] private Raycast3DModule _upperStepCheck;
+        [SerializeField] private Transform _visualTransform;
 
         [Header("Settings")]
         [SerializeField] private float _groundMoveSpeed = 7f;
         [SerializeField] private float _airMoveSpeed = 3f;
         [SerializeField] private float _maxSpeed = 6f;
-        [SerializeField] private float _airRotateCompensationMultiplier = 1.5f; 
         [SerializeField] private float _rotationSpeed = 15f;
         [SerializeField] private float _jumpSpeed = 15f;
         [SerializeField] private float _maxSlopeAngle = 45f;
-        //[]
+        [SerializeField] private float _maxStepHeight = 0.3f;
+        [SerializeField] private float _stepForce = 1f;
         [SerializeField] private float _groundDrag = 3f;
         [SerializeField] private float _airDrag = 0f;
 
@@ -32,11 +35,12 @@ namespace GameCells.Player
         private Vector3 _targetVelocity;
 
         private bool _isGrounded => _groundCheck.Hit;
-        private bool _isOnSlope => Vector3.Angle(Vector3.up, _slopeCheck.HitInfo().normal) > 0.01f;
+        private bool _isOnSlope => Vector3.Angle(Vector3.up, _slopeCheck.HitInfo().normal) > 5f;
 
         private void OnEnable()
         {
             _playerInputHandler.JumpInput += HandleJump;
+            _upperStepCheck.transform.localPosition = new Vector3(0f, _maxStepHeight, 0f);
         }
 
         private void OnDisable()
@@ -73,64 +77,23 @@ namespace GameCells.Player
             {
                 _playerRigidbody.drag = _airDrag;
                 _targetVelocity = _targetDirection * _airMoveSpeed;
-
-                /*float align = -(Vector3.Dot(_targetVelocity.normalized, _playerRigidbody.velocity.normalized) / _targetVelocity.normalized.sqrMagnitude);
-                if (float.IsNaN(align))
-                {
-                    align = 0f;
-                }
-                align = Mathf.Clamp01(align) + 1;
-
-                Debug.Log(Mathf.Lerp(1, _airRotateCompensationMultiplier, align));
-                _targetVelocity = _targetVelocity * Mathf.Lerp(1, _airRotateCompensationMultiplier, align);
-
-                _targetVelocity = _targetVelocity * Mathf.Lerp(1, _airRotateCompensationMultiplier, align);*/
             }
 
             _targetVelocity.y = 0f;
 
             _playerRigidbody.AddForce(_targetVelocity);
 
-            if (_isOnSlope) //Stop gravity when on slope to prevent sliding down slopes
-            {
-                Vector3 slopeNormal = _slopeCheck.HitInfo().normal;
+            CheckSlopeMovement();
 
-                Debug.Log(Vector3.Angle(slopeNormal, Vector3.up));
-                if (Vector3.Angle(slopeNormal, Vector3.up) > _maxSlopeAngle) //Too steep, push player down
-                {
-                    _playerRigidbody.AddForce(new Vector3(0f, -30f, 0f));
-                    _playerRigidbody.useGravity = true;
-                }
-                else if (_playerRigidbody.velocity.y < 0)
-                {
-                    if (_moveInput != Vector3.zero && Vector3.Angle(_targetDirection.normalized, slopeNormal) < 90f) //Moving down slope. Adding force to avoid bump.
-                    {
-                        _playerRigidbody.AddForce(new Vector3(0f, -30f, 0f));
-                        _playerRigidbody.useGravity = true;
-                    }
-                    else if (Vector3.Angle(slopeNormal, Vector3.up) < _maxSlopeAngle)
-                    {
-                        _playerRigidbody.useGravity = false;
-                    }
-                    else
-                    {
-                        _playerRigidbody.AddForce(new Vector3(0f, -30f, 0f));
-                        _playerRigidbody.useGravity = true;
-                    }
-                }
-            }
-            else
-                _playerRigidbody.useGravity = true;
+            CheckStepClimb();
 
-            float currentSpeed = new Vector3(_playerRigidbody.velocity.x, 0f, _playerRigidbody.velocity.z).magnitude;
-            if (currentSpeed > _maxSpeed)
-            {
-                _targetVelocity = _targetDirection * _maxSpeed;
-                _targetVelocity.y = _playerRigidbody.velocity.y;
-                _playerRigidbody.velocity = _targetVelocity;
-            }
+            LimitMaxSpeed();
 
-            //Animations
+            UpdateMoveAnimations();
+        }
+
+        private void UpdateMoveAnimations()
+        {
             if (_playerAnimator != null)
             {
                 if (_playerRigidbody.velocity.sqrMagnitude > 0.1f)
@@ -144,6 +107,49 @@ namespace GameCells.Player
             }
         }
 
+        private void LimitMaxSpeed()
+        {
+            float currentSpeed = new Vector3(_playerRigidbody.velocity.x, 0f, _playerRigidbody.velocity.z).magnitude;
+            if (currentSpeed > _maxSpeed)
+            {
+                _targetVelocity = _targetDirection * _maxSpeed;
+                _targetVelocity.y = _playerRigidbody.velocity.y;
+                _playerRigidbody.velocity = _targetVelocity;
+            }
+        }
+
+        private void CheckSlopeMovement()
+        {
+            if (_isOnSlope) //Stop gravity when on slope to prevent sliding down slopes
+            {
+                Vector3 slopeNormal = _slopeCheck.HitInfo().normal;
+
+                if (Vector3.Angle(slopeNormal, Vector3.up) > _maxSlopeAngle || (_moveInput != Vector3.zero && Vector3.Angle(_targetDirection, slopeNormal) < 90f)) //Too steep or moving down slope. Added force avoids bump
+                {
+                    _playerRigidbody.AddForce(0f, -30f, 0f);
+                    _playerRigidbody.useGravity = true;
+                }
+                else if (_playerRigidbody.velocity.y < 0)
+                {
+                    _playerRigidbody.useGravity = false;
+
+                }
+            }
+            else
+                _playerRigidbody.useGravity = true;
+        }
+
+        private void CheckStepClimb()
+        {
+            bool stepAhead = _lowerStepCheck.Hit && !_upperStepCheck.Hit;
+            bool movingTowardsStep = _moveInput != Vector3.zero && Vector3.Angle(_targetDirection, _upperStepCheck.transform.forward) < 15f;
+
+            if (stepAhead && !_isOnSlope && movingTowardsStep)
+            {
+                _playerRigidbody.AddForce(0f, _stepForce, 0f);
+            }
+        }
+
         private void HandleRotation()
         {
             Quaternion targetRotation;
@@ -152,9 +158,11 @@ namespace GameCells.Player
             else
                 targetRotation = Quaternion.LookRotation(transform.forward);
 
-            Quaternion playerRotation = Quaternion.Slerp(transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
+            //Quaternion playerRotation = Quaternion.Slerp(transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
+            //_playerRigidbody.rotation = playerRotation;
 
-            _playerRigidbody.rotation = playerRotation;
+            Quaternion surfaceAlignmentRotation = Quaternion.FromToRotation(transform.up, _slopeCheck.HitInfo().normal);
+            _playerRigidbody.rotation = Quaternion.Slerp(transform.rotation, surfaceAlignmentRotation * targetRotation, 10 * Time.deltaTime);
         }
 
         private void HandleJump()
