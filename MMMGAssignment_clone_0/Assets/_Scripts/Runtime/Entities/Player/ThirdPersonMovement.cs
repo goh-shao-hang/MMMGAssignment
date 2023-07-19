@@ -109,12 +109,16 @@ namespace GameCells.Player
 
         private void LimitMaxSpeed()
         {
-            float currentSpeed = new Vector3(_playerRigidbody.velocity.x, 0f, _playerRigidbody.velocity.z).magnitude;
-            if (currentSpeed > _maxSpeed)
+            Vector3 currentSpeed = new Vector3(_playerRigidbody.velocity.x, 0f, _playerRigidbody.velocity.z);
+            if (currentSpeed.magnitude > _maxSpeed)
             {
-                _targetVelocity = _targetDirection * _maxSpeed;
+                /*_targetVelocity = _targetDirection * _maxSpeed;
+                _targetVelocity.y = _playerRigidbody.velocity.y;
+                _playerRigidbody.velocity = _targetVelocity;*/
+                _targetVelocity = currentSpeed.normalized * _maxSpeed;
                 _targetVelocity.y = _playerRigidbody.velocity.y;
                 _playerRigidbody.velocity = _targetVelocity;
+
             }
         }
 
