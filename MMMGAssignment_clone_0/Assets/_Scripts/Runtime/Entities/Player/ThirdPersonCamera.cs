@@ -4,14 +4,16 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Cinemachine;
 using Photon.Pun;
+using UnityEngine.Animations.Rigging;
 
 namespace GameCells.Player
 {
     public class ThirdPersonCamera : MonoBehaviourPun
     {
         [Header("Dependencies")]
-        [SerializeField] private CinemachineVirtualCamera _playerCameraPrefab;
+        [SerializeField] private Canvas _hudCanvas;
         [SerializeField] private PlayerInputHandler _playerInputHandler;
+        [SerializeField] private TwoBoneIKConstraint _aimingArmRig;
 
         [Header("Settings")]
         [SerializeField] private float _xSensitivity = 100f;
@@ -23,7 +25,8 @@ namespace GameCells.Player
         [SerializeField] private bool _invertXAxis = false;
         [SerializeField] private bool _invertYAxis = true;
 
-        private CinemachineVirtualCamera _playerCamera;
+        [SerializeField] private CinemachineVirtualCamera _playerNormalCamera;
+        [SerializeField] private CinemachineVirtualCamera _playerAimingCamera;
 
         private Transform _cameraFollowTarget = null;
         public Transform CameraFollowTarget => _cameraFollowTarget;
@@ -36,19 +39,47 @@ namespace GameCells.Player
 
         private void Start()
         {
-            _playerCamera = Instantiate(_playerCameraPrefab);
-            _playerCamera.transform.parent = null;
+            _hudCanvas.gameObject.SetActive(false);
+            if (_aimingArmRig != null)
+            {
+                _aimingArmRig.weight = 0;
+            }
 
             if (_cameraFollowTarget == null)
             {
                 _cameraFollowTarget = new GameObject("CameraFollowTarget").transform;
                 _cameraFollowTarget.transform.position = transform.position + new Vector3(0f, 1f, 0f);
 
-                _playerCamera.m_Follow = _cameraFollowTarget;
+                _playerNormalCamera.m_Follow = _cameraFollowTarget;
+                _playerAimingCamera.m_Follow = _cameraFollowTarget;
             }
 
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
+        }
+
+        private void OnEnable()
+        {
+            _playerInputHandler.AimInputPressed += () => ToggleAim(true);
+            _playerInputHandler.AimInputReleased += () => ToggleAim(false);
+        }
+
+        private void OnDisable()
+        {
+            _playerInputHandler.AimInputPressed -= () => ToggleAim(true);
+            _playerInputHandler.AimInputReleased -= () => ToggleAim(false);
+        }
+
+        private void ToggleAim(bool aim)
+        {
+            //TODO: decouple hud
+            _hudCanvas?.gameObject.SetActive(aim);
+            _playerAimingCamera.Priority = aim ? 11 : 9;
+
+            if (_aimingArmRig != null)
+            {
+                _aimingArmRig.weight = aim ? 1 : 0;
+            }
         }
 
         private void LateUpdate()

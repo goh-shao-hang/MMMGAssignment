@@ -16,10 +16,11 @@ namespace GameCells.Player
         [SerializeField] private Raycast3DModule _slopeCheck;
         [SerializeField] private Raycast3DModule _lowerStepCheck;
         [SerializeField] private Raycast3DModule _upperStepCheck;
-        [SerializeField] private Transform _visualTransform;
+        [SerializeField] private ParticleSystem _jumpParticles;
 
         [Header("Settings")]
-        [SerializeField] private float _groundMoveSpeed = 7f;
+        [SerializeField] private float _groundMoveSpeed = 25f;
+        [SerializeField] private float _groundAimingMoveSpeed = 12f;
         [SerializeField] private float _airMoveSpeed = 3f;
         [SerializeField] private float _maxSpeed = 6f;
         [SerializeField] private float _rotationSpeed = 15f;
@@ -34,23 +35,41 @@ namespace GameCells.Player
         private Vector3 _targetDirection;
         private Vector3 _targetVelocity;
 
-        private bool _isGrounded => _groundCheck.Hit;
+        private bool _isGroundedLastFrame;
         private bool _isOnSlope => Vector3.Angle(Vector3.up, _slopeCheck.HitInfo().normal) > 5f;
+        private bool _isAiming;
+
+        private bool IsGrounded()
+        {
+            _isGroundedLastFrame = _groundCheck.Hit;
+            return _isGroundedLastFrame;
+        }
 
         private void OnEnable()
         {
             _playerInputHandler.JumpInput += HandleJump;
+            _playerInputHandler.AimInputPressed += () => SetIsAiming(true);
+            _playerInputHandler.AimInputReleased += () => SetIsAiming(false);
+
             _upperStepCheck.transform.localPosition = new Vector3(0f, _maxStepHeight, 0f);
         }
 
         private void OnDisable()
         {
+            _playerInputHandler.AimInputPressed -= () => SetIsAiming(true);
+            _playerInputHandler.AimInputReleased -= () => SetIsAiming(false);
+
             _playerInputHandler.JumpInput -= HandleJump;
         }
 
         private void Update()
         {
             HandleInput();
+
+            if (!_isGroundedLastFrame && IsGrounded())
+            {
+                SpawnJumpParticles();
+            }
         }
 
         private void FixedUpdate()
@@ -68,10 +87,10 @@ namespace GameCells.Player
 
         private void HandleMovement()
         {
-            if (_isGrounded)
+            if (IsGrounded())
             {
                 _playerRigidbody.drag = _groundDrag;
-                _targetVelocity = _targetDirection * _groundMoveSpeed;
+                _targetVelocity = _targetDirection * (_isAiming ? _groundAimingMoveSpeed : _groundMoveSpeed);
             }
             else
             {
@@ -112,9 +131,6 @@ namespace GameCells.Player
             Vector3 currentSpeed = new Vector3(_playerRigidbody.velocity.x, 0f, _playerRigidbody.velocity.z);
             if (currentSpeed.magnitude > _maxSpeed)
             {
-                /*_targetVelocity = _targetDirection * _maxSpeed;
-                _targetVelocity.y = _playerRigidbody.velocity.y;
-                _playerRigidbody.velocity = _targetVelocity;*/
                 _targetVelocity = currentSpeed.normalized * _maxSpeed;
                 _targetVelocity.y = _playerRigidbody.velocity.y;
                 _playerRigidbody.velocity = _targetVelocity;
@@ -157,26 +173,56 @@ namespace GameCells.Player
         private void HandleRotation()
         {
             Quaternion targetRotation;
-            if (_targetDirection != Vector3.zero)
-                targetRotation = Quaternion.LookRotation(_targetDirection);
-            else
-                targetRotation = Quaternion.LookRotation(transform.forward);
 
-            //Quaternion playerRotation = Quaternion.Slerp(transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
-            //_playerRigidbody.rotation = playerRotation;
+            if (!_isAiming)
+            {
+                if (_targetDirection != Vector3.zero)
+                    targetRotation = Quaternion.LookRotation(_targetDirection);
+                else
+                    targetRotation = Quaternion.LookRotation(transform.forward);
+            }
+            else
+            {
+                targetRotation = Quaternion.AngleAxis(_playerCamera.CameraFollowTarget.eulerAngles.y, Vector3.up);
+            }
 
             Quaternion surfaceAlignmentRotation = Quaternion.FromToRotation(transform.up, _slopeCheck.HitInfo().normal);
-            _playerRigidbody.rotation = Quaternion.Slerp(transform.rotation, surfaceAlignmentRotation * targetRotation, _rotationSpeed * Time.deltaTime);
+            
+            if (!_isAiming)
+            {
+                _playerRigidbody.rotation = Quaternion.Slerp(transform.rotation, surfaceAlignmentRotation * targetRotation, _rotationSpeed * Time.deltaTime);
+            }
+            else //Rotate immediately if aiming
+            {
+                _playerRigidbody.rotation = surfaceAlignmentRotation * targetRotation;
+            }
         }
 
         private void HandleJump()
         {
-            if (_isGrounded)
+            if (IsGrounded())
             {
                 _playerRigidbody.velocity = new Vector3(_playerRigidbody.velocity.x, 0f, _playerRigidbody.velocity.z);
                 _playerRigidbody.AddForce(Vector3.up * _jumpSpeed, ForceMode.Impulse);
 
                 _playerAnimator.SetTrigger(GameData.JUMP_HASH);
+
+                SpawnJumpParticles();
+            }
+        }
+
+        public void SetIsAiming(bool isAiming)
+        {
+            _isAiming = isAiming;
+        }
+
+        //TODO: particles with own script
+        public void SpawnJumpParticles()
+        {
+            if (_jumpParticles != null)
+            {
+                GameObject particles = Instantiate(_jumpParticles, transform.position, Quaternion.identity).gameObject;
+                Destroy(particles, 1f);
             }
         }
     }

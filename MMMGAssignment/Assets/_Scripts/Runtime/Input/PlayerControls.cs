@@ -64,6 +64,15 @@ namespace GameCells.Input
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Aim"",
+                    ""type"": ""Button"",
+                    ""id"": ""30c5b7e7-4627-4397-abf9-ac2417c94583"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -176,6 +185,17 @@ namespace GameCells.Input
                     ""action"": ""Look"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""929e7222-b084-4138-af1d-f7781773c6cf"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""Aim"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -216,6 +236,7 @@ namespace GameCells.Input
             m_Gameplay_Look = m_Gameplay.FindAction("Look", throwIfNotFound: true);
             m_Gameplay_Zoom = m_Gameplay.FindAction("Zoom", throwIfNotFound: true);
             m_Gameplay_Jump = m_Gameplay.FindAction("Jump", throwIfNotFound: true);
+            m_Gameplay_Aim = m_Gameplay.FindAction("Aim", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -281,6 +302,7 @@ namespace GameCells.Input
         private readonly InputAction m_Gameplay_Look;
         private readonly InputAction m_Gameplay_Zoom;
         private readonly InputAction m_Gameplay_Jump;
+        private readonly InputAction m_Gameplay_Aim;
         public struct GameplayActions
         {
             private @PlayerControls m_Wrapper;
@@ -289,6 +311,7 @@ namespace GameCells.Input
             public InputAction @Look => m_Wrapper.m_Gameplay_Look;
             public InputAction @Zoom => m_Wrapper.m_Gameplay_Zoom;
             public InputAction @Jump => m_Wrapper.m_Gameplay_Jump;
+            public InputAction @Aim => m_Wrapper.m_Gameplay_Aim;
             public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -310,6 +333,9 @@ namespace GameCells.Input
                 @Jump.started += instance.OnJump;
                 @Jump.performed += instance.OnJump;
                 @Jump.canceled += instance.OnJump;
+                @Aim.started += instance.OnAim;
+                @Aim.performed += instance.OnAim;
+                @Aim.canceled += instance.OnAim;
             }
 
             private void UnregisterCallbacks(IGameplayActions instance)
@@ -326,6 +352,9 @@ namespace GameCells.Input
                 @Jump.started -= instance.OnJump;
                 @Jump.performed -= instance.OnJump;
                 @Jump.canceled -= instance.OnJump;
+                @Aim.started -= instance.OnAim;
+                @Aim.performed -= instance.OnAim;
+                @Aim.canceled -= instance.OnAim;
             }
 
             public void RemoveCallbacks(IGameplayActions instance)
@@ -367,6 +396,7 @@ namespace GameCells.Input
             void OnLook(InputAction.CallbackContext context);
             void OnZoom(InputAction.CallbackContext context);
             void OnJump(InputAction.CallbackContext context);
+            void OnAim(InputAction.CallbackContext context);
         }
     }
 }
