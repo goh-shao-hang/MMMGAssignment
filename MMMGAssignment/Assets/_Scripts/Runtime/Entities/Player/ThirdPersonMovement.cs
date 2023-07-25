@@ -1,11 +1,12 @@
 using GameCells.Modules;
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace GameCells.Player
 {
-    public class ThirdPersonMovement : MonoBehaviour
+    public class ThirdPersonMovement : MonoBehaviourPun
     {
         [Header("Dependencies")]
         [SerializeField] private PlayerInputHandler _playerInputHandler;
@@ -20,9 +21,9 @@ namespace GameCells.Player
 
         [Header("Settings")]
         [SerializeField] private float _groundMoveSpeed = 25f;
-        [SerializeField] private float _groundAimingMoveSpeed = 12f;
         [SerializeField] private float _airMoveSpeed = 3f;
         [SerializeField] private float _maxSpeed = 6f;
+        [SerializeField] private float _aimingMaxSpeed = 3f;
         [SerializeField] private float _rotationSpeed = 15f;
         [SerializeField] private float _jumpSpeed = 15f;
         [SerializeField] private float _maxSlopeAngle = 45f;
@@ -90,7 +91,7 @@ namespace GameCells.Player
             if (IsGrounded())
             {
                 _playerRigidbody.drag = _groundDrag;
-                _targetVelocity = _targetDirection * (_isAiming ? _groundAimingMoveSpeed : _groundMoveSpeed);
+                _targetVelocity = _targetDirection * _groundMoveSpeed;
             }
             else
             {
@@ -131,11 +132,10 @@ namespace GameCells.Player
             Vector3 currentSpeed = new Vector3(_playerRigidbody.velocity.x, 0f, _playerRigidbody.velocity.z);
             if (currentSpeed.magnitude > _maxSpeed)
             {
-                _targetVelocity = currentSpeed.normalized * _maxSpeed;
+                _targetVelocity = currentSpeed.normalized * (_isAiming ? _aimingMaxSpeed : _maxSpeed);
                 _targetVelocity.y = _playerRigidbody.velocity.y;
                 _playerRigidbody.velocity = _targetVelocity;
-
-            }
+            }   
         }
 
         private void CheckSlopeMovement()
@@ -194,7 +194,7 @@ namespace GameCells.Player
             }
             else //Rotate immediately if aiming
             {
-                _playerRigidbody.rotation = surfaceAlignmentRotation * targetRotation;
+                _playerRigidbody.rotation = Quaternion.Slerp(transform.rotation, surfaceAlignmentRotation * targetRotation, _rotationSpeed * Time.deltaTime * 2);
             }
         }
 
@@ -213,6 +213,9 @@ namespace GameCells.Player
 
         public void SetIsAiming(bool isAiming)
         {
+            if (!photonView.IsMine)
+                return;
+
             _isAiming = isAiming;
         }
 

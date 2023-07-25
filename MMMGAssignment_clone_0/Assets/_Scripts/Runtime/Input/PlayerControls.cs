@@ -73,6 +73,15 @@ namespace GameCells.Input
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Fire"",
+                    ""type"": ""Button"",
+                    ""id"": ""32d77b48-8642-4d26-911c-a4c7bd97a1aa"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -196,6 +205,28 @@ namespace GameCells.Input
                     ""action"": ""Aim"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""52a626fe-da3f-4532-ba63-307c53e68d63"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""Fire"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3555a77b-db10-416b-b3ad-1eb5e5888841"",
+                    ""path"": ""<Gamepad>/rightTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""Fire"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -237,6 +268,7 @@ namespace GameCells.Input
             m_Gameplay_Zoom = m_Gameplay.FindAction("Zoom", throwIfNotFound: true);
             m_Gameplay_Jump = m_Gameplay.FindAction("Jump", throwIfNotFound: true);
             m_Gameplay_Aim = m_Gameplay.FindAction("Aim", throwIfNotFound: true);
+            m_Gameplay_Fire = m_Gameplay.FindAction("Fire", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -303,6 +335,7 @@ namespace GameCells.Input
         private readonly InputAction m_Gameplay_Zoom;
         private readonly InputAction m_Gameplay_Jump;
         private readonly InputAction m_Gameplay_Aim;
+        private readonly InputAction m_Gameplay_Fire;
         public struct GameplayActions
         {
             private @PlayerControls m_Wrapper;
@@ -312,6 +345,7 @@ namespace GameCells.Input
             public InputAction @Zoom => m_Wrapper.m_Gameplay_Zoom;
             public InputAction @Jump => m_Wrapper.m_Gameplay_Jump;
             public InputAction @Aim => m_Wrapper.m_Gameplay_Aim;
+            public InputAction @Fire => m_Wrapper.m_Gameplay_Fire;
             public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -336,6 +370,9 @@ namespace GameCells.Input
                 @Aim.started += instance.OnAim;
                 @Aim.performed += instance.OnAim;
                 @Aim.canceled += instance.OnAim;
+                @Fire.started += instance.OnFire;
+                @Fire.performed += instance.OnFire;
+                @Fire.canceled += instance.OnFire;
             }
 
             private void UnregisterCallbacks(IGameplayActions instance)
@@ -355,6 +392,9 @@ namespace GameCells.Input
                 @Aim.started -= instance.OnAim;
                 @Aim.performed -= instance.OnAim;
                 @Aim.canceled -= instance.OnAim;
+                @Fire.started -= instance.OnFire;
+                @Fire.performed -= instance.OnFire;
+                @Fire.canceled -= instance.OnFire;
             }
 
             public void RemoveCallbacks(IGameplayActions instance)
@@ -397,6 +437,7 @@ namespace GameCells.Input
             void OnZoom(InputAction.CallbackContext context);
             void OnJump(InputAction.CallbackContext context);
             void OnAim(InputAction.CallbackContext context);
+            void OnFire(InputAction.CallbackContext context);
         }
     }
 }

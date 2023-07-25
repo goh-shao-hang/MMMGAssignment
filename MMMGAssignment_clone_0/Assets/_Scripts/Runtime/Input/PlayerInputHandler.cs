@@ -14,7 +14,8 @@ public class PlayerInputHandler : MonoBehaviour
     public event Action JumpInput;
     public event Action AimInputPressed;
     public event Action AimInputReleased;
-
+    public event Action FireInputPressed;
+    public event Action FireInputReleased;
     private void OnEnable()
     {
         if (_playerControls == null)
@@ -38,6 +39,8 @@ public class PlayerInputHandler : MonoBehaviour
         _playerControls.Gameplay.Jump.performed += ctx => OnJumpInput(ctx);
         _playerControls.Gameplay.Aim.performed += ctx => OnAimInputPressed(ctx);
         _playerControls.Gameplay.Aim.canceled += ctx => OnAimInputReleased(ctx);
+        _playerControls.Gameplay.Fire.performed += ctx => OnFireInputPressed(ctx);
+        _playerControls.Gameplay.Fire.canceled += ctx => OnFireInputReleased(ctx);
     }
 
     private void OnMoveInput(InputAction.CallbackContext ctx)
@@ -63,5 +66,15 @@ public class PlayerInputHandler : MonoBehaviour
     private void OnAimInputReleased(InputAction.CallbackContext ctx)
     {
         AimInputReleased?.Invoke();
+    }
+
+    private void OnFireInputPressed(InputAction.CallbackContext ctx)
+    {
+        FireInputPressed?.Invoke();
+    }
+
+    private void OnFireInputReleased(InputAction.CallbackContext ctx)
+    {
+        FireInputReleased?.Invoke();
     }
 }

@@ -40,6 +40,12 @@ MonoBehaviour:
   - Fire
   - RespawnSpaceship
   - RPC_TakeDamage
+  - Die
+  - RPC_Die
+  - RPC_StartAiming
+  - RPC_DisableObject
+  - RPC_EnableObject
+  - SpawnHitParticles
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

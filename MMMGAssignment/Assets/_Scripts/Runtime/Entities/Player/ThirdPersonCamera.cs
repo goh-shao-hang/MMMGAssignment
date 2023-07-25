@@ -13,7 +13,6 @@ namespace GameCells.Player
         [Header("Dependencies")]
         [SerializeField] private Canvas _hudCanvas;
         [SerializeField] private PlayerInputHandler _playerInputHandler;
-        [SerializeField] private TwoBoneIKConstraint _aimingArmRig;
 
         [Header("Settings")]
         [SerializeField] private float _xSensitivity = 100f;
@@ -40,10 +39,7 @@ namespace GameCells.Player
         private void Start()
         {
             _hudCanvas.gameObject.SetActive(false);
-            if (_aimingArmRig != null)
-            {
-                _aimingArmRig.weight = 0;
-            }
+            
 
             if (_cameraFollowTarget == null)
             {
@@ -72,14 +68,14 @@ namespace GameCells.Player
 
         private void ToggleAim(bool aim)
         {
+            if (!photonView.IsMine)
+                return;
+
             //TODO: decouple hud
             _hudCanvas?.gameObject.SetActive(aim);
             _playerAimingCamera.Priority = aim ? 11 : 9;
 
-            if (_aimingArmRig != null)
-            {
-                _aimingArmRig.weight = aim ? 1 : 0;
-            }
+            
         }
 
         private void LateUpdate()

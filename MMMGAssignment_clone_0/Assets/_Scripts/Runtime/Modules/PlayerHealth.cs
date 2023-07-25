@@ -8,6 +8,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 {
     [SerializeField] private PhotonView _playerPhotonView;
     [SerializeField] private int _maxHealth = 100;
+    [SerializeField] private GameObject _deathParticles;
 
     private int _currentHealth;
 
@@ -37,7 +38,6 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     private void RPC_TakeDamage(int damage)
     {
         _currentHealth -= damage;
-        Debug.Log(_currentHealth);
 
         if (_currentHealth <= 0)
         {
@@ -50,8 +50,21 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         Die();
     }
 
-    private void Die()
+    public void Die()
     {
-        PhotonNetwork.Destroy(gameObject);
+        _playerPhotonView.RPC(nameof(RPC_Die), RpcTarget.All);
+    }
+
+    [PunRPC]
+    private void RPC_Die()
+    {
+        if (_deathParticles != null)
+        {
+            //TODO: particle in seperate script
+            GameObject particles = Instantiate(_deathParticles, transform.position + Vector3.up, Quaternion.identity);
+            Destroy(particles, 3f);
+        }
+
+        Destroy(gameObject);
     }
 }
