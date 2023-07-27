@@ -16,12 +16,22 @@ public class Bullet : MonoBehaviourPun
     [Header("Settings")]
     [SerializeField] private int _bulletDamage = 20;
     [SerializeField] private float _bulletSpeed = 15f;
+    [SerializeField] private float _maxBulletLifetime = 5f;
 
     private Vector3 _hitPosition;
+    private Coroutine _selfDestructCO;
 
     private void OnEnable()
     {
-        _bulletRigidbody.velocity = transform.forward * _bulletSpeed; 
+        _bulletRigidbody.velocity = transform.forward * _bulletSpeed;
+
+        if (_selfDestructCO != null)
+        {
+            StopCoroutine(_selfDestructCO);
+            _selfDestructCO = null;
+        }
+
+        _selfDestructCO = StartCoroutine(SelfDestructCO());
     }
 
     private void OnTriggerEnter(Collider other)
@@ -40,8 +50,20 @@ public class Bullet : MonoBehaviourPun
         }
     }
 
+    private IEnumerator SelfDestructCO()
+    {
+        yield return WaitHandler.GetWaitForSeconds(_maxBulletLifetime);
+        DestroyBullet();
+    }
+
     private void DestroyBullet()
     {
+        if (_selfDestructCO != null)
+        {
+            StopCoroutine(_selfDestructCO);
+            _selfDestructCO = null;
+        }
+
         if (_trailParticles != null)
         {
             _trailParticles.transform.parent = null;

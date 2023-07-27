@@ -49,17 +49,12 @@ namespace GameCells.Player
         private void OnEnable()
         {
             _playerInputHandler.JumpInput += HandleJump;
-            _playerInputHandler.AimInputPressed += () => SetIsAiming(true);
-            _playerInputHandler.AimInputReleased += () => SetIsAiming(false);
 
             _upperStepCheck.transform.localPosition = new Vector3(0f, _maxStepHeight, 0f);
         }
 
         private void OnDisable()
         {
-            _playerInputHandler.AimInputPressed -= () => SetIsAiming(true);
-            _playerInputHandler.AimInputReleased -= () => SetIsAiming(false);
-
             _playerInputHandler.JumpInput -= HandleJump;
         }
 

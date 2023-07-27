@@ -11,8 +11,9 @@ namespace GameCells.Player
     public class ThirdPersonCamera : MonoBehaviourPun
     {
         [Header("Dependencies")]
-        [SerializeField] private Canvas _hudCanvas;
         [SerializeField] private PlayerInputHandler _playerInputHandler;
+        [SerializeField] private Camera _camera;
+        [SerializeField] private CinemachineVirtualCamera _playerNormalCamera;
 
         [Header("Settings")]
         [SerializeField] private float _xSensitivity = 100f;
@@ -24,12 +25,10 @@ namespace GameCells.Player
         [SerializeField] private bool _invertXAxis = false;
         [SerializeField] private bool _invertYAxis = true;
 
-        [SerializeField] private CinemachineVirtualCamera _playerNormalCamera;
-        [SerializeField] private CinemachineVirtualCamera _playerAimingCamera;
-
         private Transform _cameraFollowTarget = null;
         public Transform CameraFollowTarget => _cameraFollowTarget;
 
+        public Camera Camera => _camera;
         private float _xRotation;
         private float _yRotation;
 
@@ -38,44 +37,16 @@ namespace GameCells.Player
 
         private void Start()
         {
-            _hudCanvas.gameObject.SetActive(false);
-            
-
             if (_cameraFollowTarget == null)
             {
                 _cameraFollowTarget = new GameObject("CameraFollowTarget").transform;
                 _cameraFollowTarget.transform.position = transform.position + new Vector3(0f, 1f, 0f);
 
                 _playerNormalCamera.m_Follow = _cameraFollowTarget;
-                _playerAimingCamera.m_Follow = _cameraFollowTarget;
             }
 
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
-        }
-
-        private void OnEnable()
-        {
-            _playerInputHandler.AimInputPressed += () => ToggleAim(true);
-            _playerInputHandler.AimInputReleased += () => ToggleAim(false);
-        }
-
-        private void OnDisable()
-        {
-            _playerInputHandler.AimInputPressed -= () => ToggleAim(true);
-            _playerInputHandler.AimInputReleased -= () => ToggleAim(false);
-        }
-
-        private void ToggleAim(bool aim)
-        {
-            if (!photonView.IsMine)
-                return;
-
-            //TODO: decouple hud
-            _hudCanvas?.gameObject.SetActive(aim);
-            _playerAimingCamera.Priority = aim ? 11 : 9;
-
-            
         }
 
         private void LateUpdate()

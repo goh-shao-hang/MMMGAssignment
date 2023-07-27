@@ -1,3 +1,4 @@
+using Cinemachine;
 using GameCells.Utilities;
 using Photon.Pun;
 using System.Collections;
@@ -14,12 +15,17 @@ namespace GameCells.Player
         [SerializeField] private Transform _fireTransform;
         [SerializeField] private PlayerInputHandler _playerInputHandler;
         [SerializeField] private GameObject _playerGun;
-        [SerializeField] private Camera _playerCamera;
+        [SerializeField] private ThirdPersonMovement _playerThirdPersonMovement;
+        [SerializeField] private ThirdPersonCamera _playerThirdPersonCamera;
+        [SerializeField] private CinemachineVirtualCamera _playerAimingCamera;
         [SerializeField] private TwoBoneIKConstraint _aimingArmRig;
         [SerializeField] private Transform _ikTargetTransform;
+        [SerializeField] private Canvas _crossHairCanvas;
 
         [Header("Settings")]
         [SerializeField] private float _fireCD = 0.5f;
+
+        [SerializeField] private bool _hasGun;
 
         private float _fireTimer = 0f;
         private bool _isAiming = false;
@@ -30,12 +36,19 @@ namespace GameCells.Player
 
         private void Start()
         {
+            if (_crossHairCanvas != null)
+                _crossHairCanvas.gameObject.SetActive(false);
+            
+            _playerAimingCamera.m_Follow = _playerThirdPersonCamera.CameraFollowTarget;
+
+            EquipGun(false);
+
             if (_aimingArmRig != null)
             {
                 _aimingArmRig.weight = 0;
             }
 
-            StopAiming();
+            _playerAimingCamera.gameObject.SetActive(false);
         }
 
         private void OnEnable()
@@ -56,8 +69,22 @@ namespace GameCells.Player
 
         private void Update()
         {
+            //TODO DEBUG
+            if (UnityEngine.Input.GetKeyDown(KeyCode.E))
+            {
+                EquipGun(!_hasGun);
+            }
+
+            if (!_hasGun)
+                return;
+
             HandleGunRotation();
             HandleShooting();
+        }
+
+        public void EquipGun(bool equip)
+        {
+            _hasGun = equip;
         }
 
         private void StartAiming()
@@ -65,6 +92,14 @@ namespace GameCells.Player
             if (!photonView.IsMine)
                 return;
 
+            if (!_hasGun)
+                return;
+
+            if (_crossHairCanvas != null)
+                _crossHairCanvas.gameObject.SetActive(true);
+
+            _playerThirdPersonMovement.SetIsAiming(true);
+            _playerAimingCamera.gameObject.SetActive(true);
             photonView.RPC(nameof(RPC_StartAiming), RpcTarget.All, true);
 
             if (_startAimingCO != null)
@@ -81,6 +116,14 @@ namespace GameCells.Player
             if (!photonView.IsMine)
                 return;
 
+            if (!_hasGun)
+                return;
+
+            if (_crossHairCanvas != null)
+                _crossHairCanvas.gameObject.SetActive(false);
+
+            _playerThirdPersonMovement.SetIsAiming(false);
+            _playerAimingCamera.gameObject.SetActive(false);
             photonView.RPC(nameof(RPC_StartAiming), RpcTarget.All, false);
 
             if (_startAimingCO != null)
@@ -122,17 +165,17 @@ namespace GameCells.Player
 
         private void HandleGunRotation()
         {
-            if (Physics.Raycast(_playerCamera.transform.position, _playerCamera.transform.forward, out _hit, Mathf.Infinity))
+            if (Physics.Raycast(_playerThirdPersonCamera.Camera.transform.position, _playerThirdPersonCamera.transform.forward, out _hit, Mathf.Infinity))
             {
                 _bulletTarget = _hit.point;
             }
             else
             {
-                _bulletTarget = _playerCamera.transform.position + _playerCamera.transform.forward * 100f;
+                _bulletTarget = _playerThirdPersonCamera.Camera.transform.position + _playerThirdPersonCamera.Camera.transform.forward * 100f;
             }
 
             Vector3 gunRotation = _ikTargetTransform.rotation.eulerAngles;
-            gunRotation.x = _playerCamera.transform.eulerAngles.x;
+            gunRotation.x = _playerThirdPersonCamera.Camera.transform.eulerAngles.x;
             _ikTargetTransform.rotation = Quaternion.Euler(gunRotation);
         }
 

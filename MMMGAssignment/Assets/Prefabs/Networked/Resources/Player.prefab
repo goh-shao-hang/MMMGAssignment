@@ -28,7 +28,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 56552849}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -79.59936, z: -5.000004}
+  m_LocalPosition: {x: 0, y: -88.79922, z: -5.000004}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -331,7 +331,7 @@ GameObject:
   - component: {fileID: 1172841205}
   - component: {fileID: 1172841204}
   m_Layer: 5
-  m_Name: HUDCanvas
+  m_Name: CrosshairCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1273,8 +1273,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b00647d8d617faa488d7c364aa831a90, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _hudCanvas: {fileID: 1172841206}
   _playerInputHandler: {fileID: 3949671025169868611}
+  _camera: {fileID: 56552854}
+  _playerNormalCamera: {fileID: 1631675781445915374}
   _xSensitivity: 200
   _ySensitivity: 200
   _maxLookUpAngle: 80
@@ -1283,8 +1284,6 @@ MonoBehaviour:
   _smoothFactor: 20
   _invertXAxis: 0
   _invertYAxis: 1
-  _playerNormalCamera: {fileID: 1631675781445915374}
-  _playerAimingCamera: {fileID: 5745093563805627715}
 --- !u!114 &3949671025169868615
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1366,10 +1365,14 @@ MonoBehaviour:
   _fireTransform: {fileID: 1094973479298261188}
   _playerInputHandler: {fileID: 3949671025169868611}
   _playerGun: {fileID: 6668628694412270096}
-  _playerCamera: {fileID: 56552854}
+  _playerThirdPersonMovement: {fileID: 3949671025169868615}
+  _playerThirdPersonCamera: {fileID: 3949671025169868616}
+  _playerAimingCamera: {fileID: 5745093563805627715}
   _aimingArmRig: {fileID: 7473229420145728929}
   _ikTargetTransform: {fileID: 909672342478632195}
+  _crossHairCanvas: {fileID: 1172841206}
   _fireCD: 0.2
+  _hasGun: 0
 --- !u!1 &3949671026973976642
 GameObject:
   m_ObjectHideFlags: 0
@@ -2315,7 +2318,7 @@ PrefabInstance:
     - target: {fileID: 9061502777945035285, guid: 28595d64271c1a2438ec4b264e1dd2bf,
         type: 3}
       propertyPath: m_Priority
-      value: 9
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 9061502777945035306, guid: 28595d64271c1a2438ec4b264e1dd2bf,
         type: 3}

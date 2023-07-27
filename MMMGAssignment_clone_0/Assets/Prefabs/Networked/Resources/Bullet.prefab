@@ -4954,6 +4954,7 @@ MonoBehaviour:
     type: 3}
   _bulletDamage: 20
   _bulletSpeed: 30
+  _maxBulletLifetime: 5
 --- !u!114 &3728569422881335615
 MonoBehaviour:
   m_ObjectHideFlags: 0
