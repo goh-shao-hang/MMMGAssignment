@@ -28,7 +28,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 56552849}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -88.79922, z: -5.000004}
+  m_LocalPosition: {x: 6.000002, y: -83.39921, z: 9.999996}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1372,6 +1372,9 @@ MonoBehaviour:
   _ikTargetTransform: {fileID: 909672342478632195}
   _crossHairCanvas: {fileID: 1172841206}
   _fireCD: 0.2
+  _targetableLayers:
+    serializedVersion: 2
+    m_Bits: 192
   _hasGun: 0
 --- !u!1 &3949671026973976642
 GameObject:

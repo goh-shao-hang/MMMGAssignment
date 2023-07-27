@@ -24,6 +24,7 @@ namespace GameCells.Player
 
         [Header("Settings")]
         [SerializeField] private float _fireCD = 0.5f;
+        [SerializeField] private LayerMask _targetableLayers; //Purely for increasing accuracy of raycast
 
         [SerializeField] private bool _hasGun;
 
@@ -165,7 +166,7 @@ namespace GameCells.Player
 
         private void HandleGunRotation()
         {
-            if (Physics.Raycast(_playerThirdPersonCamera.Camera.transform.position, _playerThirdPersonCamera.transform.forward, out _hit, Mathf.Infinity))
+            if (Physics.Raycast(_playerThirdPersonCamera.Camera.transform.position, _playerThirdPersonCamera.Camera.transform.forward, out _hit, Mathf.Infinity, _targetableLayers))
             {
                 _bulletTarget = _hit.point;
             }
