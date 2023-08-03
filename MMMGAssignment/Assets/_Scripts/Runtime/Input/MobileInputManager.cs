@@ -27,8 +27,8 @@ public class MobileInputManager : Singleton<MobileInputManager>
 
         if (Input.GetKeyDown(KeyCode.M))
         {
-            Debug.Log("Mobile Debuggger: " + _isMobileInputActive);
             ActivateMobileInput(!_isMobileInputActive);
+            Debug.LogWarning($"Mobile Debug Mode {(_isMobileInputActive ? "On" : "Off")}");
         }
 
 #endif
@@ -36,7 +36,6 @@ public class MobileInputManager : Singleton<MobileInputManager>
 
     private void ActivateMobileInput(bool activate)
     {
-        Debug.Log(activate);
         _isMobileInputActive = activate;
         _mobileInputCanvas.gameObject.SetActive(activate);
     }

@@ -45,9 +45,21 @@ namespace GameCells.Player
                 _playerNormalCamera.m_Follow = _cameraFollowTarget;
             }
 
-            //Cursor.lockState = CursorLockMode.Locked;
-            //Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
         }
+
+        //TODO MOBILE DEBUG
+#if UNITY_EDITOR
+        private void Update()
+        {
+            if (UnityEngine.Input.GetKeyDown(KeyCode.M))
+            {
+                Cursor.lockState = Cursor.lockState == CursorLockMode.Locked ? CursorLockMode.None : CursorLockMode.Locked;
+                Cursor.visible = !Cursor.visible;
+            }
+        }
+#endif
 
         private void LateUpdate()
         {
