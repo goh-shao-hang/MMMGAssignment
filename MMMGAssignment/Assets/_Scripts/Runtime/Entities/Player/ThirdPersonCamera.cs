@@ -45,8 +45,8 @@ namespace GameCells.Player
                 _playerNormalCamera.m_Follow = _cameraFollowTarget;
             }
 
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+            //Cursor.lockState = CursorLockMode.Locked;
+            //Cursor.visible = false;
         }
 
         private void LateUpdate()

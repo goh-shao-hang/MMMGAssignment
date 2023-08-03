@@ -66,9 +66,18 @@ namespace GameCells.Input
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Aim"",
+                    ""name"": ""HoldAim"",
                     ""type"": ""Button"",
                     ""id"": ""30c5b7e7-4627-4397-abf9-ac2417c94583"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ToggleAim"",
+                    ""type"": ""Button"",
+                    ""id"": ""39ab8342-9b09-45e1-acb3-df60d989e28d"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -202,7 +211,7 @@ namespace GameCells.Input
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard"",
-                    ""action"": ""Aim"",
+                    ""action"": ""HoldAim"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -225,6 +234,17 @@ namespace GameCells.Input
                     ""processors"": """",
                     ""groups"": ""Gamepad"",
                     ""action"": ""Fire"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""89dc3a84-754d-4e59-a788-73bc4529111f"",
+                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""ToggleAim"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -267,7 +287,8 @@ namespace GameCells.Input
             m_Gameplay_Look = m_Gameplay.FindAction("Look", throwIfNotFound: true);
             m_Gameplay_Zoom = m_Gameplay.FindAction("Zoom", throwIfNotFound: true);
             m_Gameplay_Jump = m_Gameplay.FindAction("Jump", throwIfNotFound: true);
-            m_Gameplay_Aim = m_Gameplay.FindAction("Aim", throwIfNotFound: true);
+            m_Gameplay_HoldAim = m_Gameplay.FindAction("HoldAim", throwIfNotFound: true);
+            m_Gameplay_ToggleAim = m_Gameplay.FindAction("ToggleAim", throwIfNotFound: true);
             m_Gameplay_Fire = m_Gameplay.FindAction("Fire", throwIfNotFound: true);
         }
 
@@ -334,7 +355,8 @@ namespace GameCells.Input
         private readonly InputAction m_Gameplay_Look;
         private readonly InputAction m_Gameplay_Zoom;
         private readonly InputAction m_Gameplay_Jump;
-        private readonly InputAction m_Gameplay_Aim;
+        private readonly InputAction m_Gameplay_HoldAim;
+        private readonly InputAction m_Gameplay_ToggleAim;
         private readonly InputAction m_Gameplay_Fire;
         public struct GameplayActions
         {
@@ -344,7 +366,8 @@ namespace GameCells.Input
             public InputAction @Look => m_Wrapper.m_Gameplay_Look;
             public InputAction @Zoom => m_Wrapper.m_Gameplay_Zoom;
             public InputAction @Jump => m_Wrapper.m_Gameplay_Jump;
-            public InputAction @Aim => m_Wrapper.m_Gameplay_Aim;
+            public InputAction @HoldAim => m_Wrapper.m_Gameplay_HoldAim;
+            public InputAction @ToggleAim => m_Wrapper.m_Gameplay_ToggleAim;
             public InputAction @Fire => m_Wrapper.m_Gameplay_Fire;
             public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
             public void Enable() { Get().Enable(); }
@@ -367,9 +390,12 @@ namespace GameCells.Input
                 @Jump.started += instance.OnJump;
                 @Jump.performed += instance.OnJump;
                 @Jump.canceled += instance.OnJump;
-                @Aim.started += instance.OnAim;
-                @Aim.performed += instance.OnAim;
-                @Aim.canceled += instance.OnAim;
+                @HoldAim.started += instance.OnHoldAim;
+                @HoldAim.performed += instance.OnHoldAim;
+                @HoldAim.canceled += instance.OnHoldAim;
+                @ToggleAim.started += instance.OnToggleAim;
+                @ToggleAim.performed += instance.OnToggleAim;
+                @ToggleAim.canceled += instance.OnToggleAim;
                 @Fire.started += instance.OnFire;
                 @Fire.performed += instance.OnFire;
                 @Fire.canceled += instance.OnFire;
@@ -389,9 +415,12 @@ namespace GameCells.Input
                 @Jump.started -= instance.OnJump;
                 @Jump.performed -= instance.OnJump;
                 @Jump.canceled -= instance.OnJump;
-                @Aim.started -= instance.OnAim;
-                @Aim.performed -= instance.OnAim;
-                @Aim.canceled -= instance.OnAim;
+                @HoldAim.started -= instance.OnHoldAim;
+                @HoldAim.performed -= instance.OnHoldAim;
+                @HoldAim.canceled -= instance.OnHoldAim;
+                @ToggleAim.started -= instance.OnToggleAim;
+                @ToggleAim.performed -= instance.OnToggleAim;
+                @ToggleAim.canceled -= instance.OnToggleAim;
                 @Fire.started -= instance.OnFire;
                 @Fire.performed -= instance.OnFire;
                 @Fire.canceled -= instance.OnFire;
@@ -436,7 +465,8 @@ namespace GameCells.Input
             void OnLook(InputAction.CallbackContext context);
             void OnZoom(InputAction.CallbackContext context);
             void OnJump(InputAction.CallbackContext context);
-            void OnAim(InputAction.CallbackContext context);
+            void OnHoldAim(InputAction.CallbackContext context);
+            void OnToggleAim(InputAction.CallbackContext context);
             void OnFire(InputAction.CallbackContext context);
         }
     }

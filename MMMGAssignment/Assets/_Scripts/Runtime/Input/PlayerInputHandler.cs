@@ -12,8 +12,9 @@ public class PlayerInputHandler : MonoBehaviour
     public Vector2 MoveInput { get; private set; }
     public Vector2 LookInput { get; private set; }
     public event Action JumpInput;
-    public event Action AimInputPressed;
-    public event Action AimInputReleased;
+    public event Action HoldAimStarted;
+    public event Action HoldAimEnded;
+    public event Action ToggleAimInput;
     public event Action FireInputPressed;
     public event Action FireInputReleased;
     private void OnEnable()
@@ -37,8 +38,9 @@ public class PlayerInputHandler : MonoBehaviour
         _playerControls.Gameplay.Move.performed += ctx => OnMoveInput(ctx);
         _playerControls.Gameplay.Look.performed += ctx => OnLookInput(ctx);
         _playerControls.Gameplay.Jump.performed += ctx => OnJumpInput(ctx);
-        _playerControls.Gameplay.Aim.performed += ctx => OnAimInputPressed(ctx);
-        _playerControls.Gameplay.Aim.canceled += ctx => OnAimInputReleased(ctx);
+        _playerControls.Gameplay.HoldAim.performed += ctx => OnHoldAimInputStarted(ctx);
+        _playerControls.Gameplay.HoldAim.canceled += ctx => OnHoldAimInputEnded(ctx);
+        _playerControls.Gameplay.ToggleAim.performed += ctx => OnToggleAimInput(ctx);
         _playerControls.Gameplay.Fire.performed += ctx => OnFireInputPressed(ctx);
         _playerControls.Gameplay.Fire.canceled += ctx => OnFireInputReleased(ctx);
     }
@@ -58,14 +60,19 @@ public class PlayerInputHandler : MonoBehaviour
         JumpInput?.Invoke();
     }
 
-    private void OnAimInputPressed(InputAction.CallbackContext ctx)
+    private void OnHoldAimInputStarted(InputAction.CallbackContext ctx)
     {
-        AimInputPressed?.Invoke();
+        HoldAimStarted?.Invoke();
     }
 
-    private void OnAimInputReleased(InputAction.CallbackContext ctx)
+    private void OnHoldAimInputEnded(InputAction.CallbackContext ctx)
     {
-        AimInputReleased?.Invoke();
+        HoldAimEnded?.Invoke();
+    }
+
+    private void OnToggleAimInput(InputAction.CallbackContext ctx)
+    {
+        ToggleAimInput?.Invoke();
     }
 
     private void OnFireInputPressed(InputAction.CallbackContext ctx)
