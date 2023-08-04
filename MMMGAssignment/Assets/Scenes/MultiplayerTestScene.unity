@@ -2471,7 +2471,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-181906
+  m_Name: pb_Mesh-227840
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -3712,7 +3712,7 @@ GameObject:
   - component: {fileID: 1102851710}
   - component: {fileID: 1102851709}
   m_Layer: 0
-  m_Name: RoomManager
+  m_Name: NetworkDebugger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3730,8 +3730,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62431d694e84c4540870c70458a5c77a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _startInOfflineMode: 0
-  _spawnOfflinePlayer: 0
+  _startInOfflineMode: 1
+  _spawnPlayer: 1
   _playerPrefab: {fileID: 3949671025169868608, guid: 4c8c3e42766332943b40b89054c17076,
     type: 3}
   _spawnPoint: {fileID: 2122230816}
