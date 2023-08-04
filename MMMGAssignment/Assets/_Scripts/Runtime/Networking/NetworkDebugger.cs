@@ -7,7 +7,7 @@ using GameCells.Player;
 public class NetworkDebugger : MonoBehaviourPunCallbacks
 {
     [SerializeField] private bool _startInOfflineMode = false;
-    [SerializeField] private bool _spawnOfflinePlayer = false;
+    [SerializeField] private bool _spawnPlayer = false;
 
     [Space]
 
@@ -56,7 +56,7 @@ public class NetworkDebugger : MonoBehaviourPunCallbacks
 
         Debug.Log("Welcome to the room boi");
 
-        if (!PhotonNetwork.OfflineMode || _spawnOfflinePlayer)
+        if (_spawnPlayer)
         {
             GameObject newPlayer = PhotonNetwork.Instantiate(_playerPrefab.name, _spawnPoint.position, Quaternion.identity);
         }
