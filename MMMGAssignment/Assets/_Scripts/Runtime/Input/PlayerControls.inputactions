@@ -42,9 +42,18 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Aim",
+                    "name": "HoldAim",
                     "type": "Button",
                     "id": "30c5b7e7-4627-4397-abf9-ac2417c94583",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "ToggleAim",
+                    "type": "Button",
+                    "id": "39ab8342-9b09-45e1-acb3-df60d989e28d",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -178,7 +187,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard",
-                    "action": "Aim",
+                    "action": "HoldAim",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -201,6 +210,17 @@
                     "processors": "",
                     "groups": "Gamepad",
                     "action": "Fire",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "89dc3a84-754d-4e59-a788-73bc4529111f",
+                    "path": "<Gamepad>/rightShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "ToggleAim",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

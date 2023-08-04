@@ -54,27 +54,31 @@ namespace GameCells.Player
 
         private void OnEnable()
         {
-            _playerInputHandler.AimInputPressed += StartAiming;
-            _playerInputHandler.AimInputReleased += StopAiming;
-            _playerInputHandler.FireInputPressed += StartShooting;
-            _playerInputHandler.FireInputReleased += StopShooting;
+            _playerInputHandler.HoldAimStarted += () => ToggleAiming(true);
+            _playerInputHandler.HoldAimEnded += () => ToggleAiming(false);
+            _playerInputHandler.ToggleAimInput += () => ToggleAiming(!_isAiming);
+            _playerInputHandler.FireInputPressed += () => StartShooting(true);
+            _playerInputHandler.FireInputReleased += () => StartShooting(false);
         }
 
         private void OnDisable()
         {
-            _playerInputHandler.AimInputPressed -= StartAiming;
-            _playerInputHandler.AimInputReleased -= StopAiming;
-            _playerInputHandler.FireInputPressed -= StartShooting;
-            _playerInputHandler.FireInputReleased -= StopShooting;
+            _playerInputHandler.HoldAimStarted -= () => ToggleAiming(true);
+            _playerInputHandler.HoldAimEnded -= () => ToggleAiming(false);
+            _playerInputHandler.ToggleAimInput -= () => ToggleAiming(!_isAiming);
+            _playerInputHandler.FireInputPressed -= () => StartShooting(true);
+            _playerInputHandler.FireInputReleased -= () => StartShooting(false);
         }
 
         private void Update()
         {
             //TODO DEBUG
+#if UNITY_EDITOR
             if (UnityEngine.Input.GetKeyDown(KeyCode.E))
             {
                 EquipGun(!_hasGun);
             }
+#endif
 
             if (!_hasGun)
                 return;
@@ -86,9 +90,11 @@ namespace GameCells.Player
         public void EquipGun(bool equip)
         {
             _hasGun = equip;
+
+            MobileInputManager.GetInstance()?.SetHasGun(_hasGun);
         }
 
-        private void StartAiming()
+        private void ToggleAiming(bool aiming)
         {
             if (!photonView.IsMine)
                 return;
@@ -97,35 +103,11 @@ namespace GameCells.Player
                 return;
 
             if (_crossHairCanvas != null)
-                _crossHairCanvas.gameObject.SetActive(true);
+                _crossHairCanvas.gameObject.SetActive(aiming);
 
-            _playerThirdPersonMovement.SetIsAiming(true);
-            _playerAimingCamera.gameObject.SetActive(true);
-            photonView.RPC(nameof(RPC_StartAiming), RpcTarget.All, true);
-
-            if (_startAimingCO != null)
-            {
-                StopCoroutine(_startAimingCO);
-                _startAimingCO = null;
-            }
-
-            _startAimingCO = StartCoroutine(StartAimingCO());
-        }
-
-        private void StopAiming()
-        {
-            if (!photonView.IsMine)
-                return;
-
-            if (!_hasGun)
-                return;
-
-            if (_crossHairCanvas != null)
-                _crossHairCanvas.gameObject.SetActive(false);
-
-            _playerThirdPersonMovement.SetIsAiming(false);
-            _playerAimingCamera.gameObject.SetActive(false);
-            photonView.RPC(nameof(RPC_StartAiming), RpcTarget.All, false);
+            _playerThirdPersonMovement.SetIsAiming(aiming);
+            _playerAimingCamera.gameObject.SetActive(aiming);
+            photonView.RPC(nameof(RPC_StartAiming), RpcTarget.All, aiming);
 
             if (_startAimingCO != null)
             {
@@ -133,13 +115,26 @@ namespace GameCells.Player
                 _startAimingCO = null;
             }
 
-            _isAiming = false;
+            if (aiming)
+            {
+                _startAimingCO = StartCoroutine(StartAimingCO()); //isAiming will be set to true here with a delay to prevent bug
+            }
+            else
+            {
+                _isAiming = false;
+
+                //TODO
+                MobileInputManager.GetInstance()?.SetIsAiming(false);
+            }
         }
 
         private IEnumerator StartAimingCO() //This coroutine is to prevent firing before the camera switching is complete and causing raycast to lend on the player itself
         {
             yield return WaitHandler.GetWaitForSeconds(0.1f);
             _isAiming = true;
+
+            //TODO
+            MobileInputManager.GetInstance()?.SetIsAiming(true);
         }
 
         [PunRPC]
@@ -154,14 +149,9 @@ namespace GameCells.Player
             }
         }
 
-        private void StartShooting()
+        private void StartShooting(bool shooting)
         {
-            _isShooting = true;
-        }
-
-        private void StopShooting()
-        {
-            _isShooting = false;
+            _isShooting = shooting;
         }
 
         private void HandleGunRotation()

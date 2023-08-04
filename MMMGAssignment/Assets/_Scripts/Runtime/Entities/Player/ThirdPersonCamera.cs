@@ -49,6 +49,18 @@ namespace GameCells.Player
             Cursor.visible = false;
         }
 
+        //TODO MOBILE DEBUG
+#if UNITY_EDITOR
+        private void Update()
+        {
+            if (UnityEngine.Input.GetKeyDown(KeyCode.M))
+            {
+                Cursor.lockState = Cursor.lockState == CursorLockMode.Locked ? CursorLockMode.None : CursorLockMode.Locked;
+                Cursor.visible = !Cursor.visible;
+            }
+        }
+#endif
+
         private void LateUpdate()
         {
             CameraRotation();
