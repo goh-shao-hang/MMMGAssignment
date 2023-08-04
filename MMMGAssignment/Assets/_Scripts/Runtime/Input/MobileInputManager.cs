@@ -1,7 +1,9 @@
 using GameCells.Utilities;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class MobileInputManager : Singleton<MobileInputManager>
@@ -11,8 +13,15 @@ public class MobileInputManager : Singleton<MobileInputManager>
     [SerializeField] private GameObject _normalUI;
     [SerializeField] private GameObject _aimingUI;
     [SerializeField] private GameObject _aimButton;
+    [SerializeField] private FixedTouchField _cameraRotateField;
 
-    private bool _isMobileInputActive;
+    [Header("Settings")]
+    [SerializeField] private float _mobileLookSensitivity;
+
+    public event Action<bool> OnMobileInputActiveStateChanged;
+
+    public Vector2 MobileLookInput => _cameraRotateField.TouchDelta * _mobileLookSensitivity;
+    public bool IsMobileInputActive { get; private set; }
 
     private void Awake()
     {
@@ -27,8 +36,8 @@ public class MobileInputManager : Singleton<MobileInputManager>
 
         if (Input.GetKeyDown(KeyCode.M))
         {
-            ActivateMobileInput(!_isMobileInputActive);
-            Debug.LogWarning($"Mobile Debug Mode {(_isMobileInputActive ? "On" : "Off")}");
+            ActivateMobileInput(!IsMobileInputActive);
+            Debug.LogWarning($"Mobile Debug Mode {(IsMobileInputActive ? "On" : "Off")}");
         }
 
 #endif
@@ -36,8 +45,10 @@ public class MobileInputManager : Singleton<MobileInputManager>
 
     private void ActivateMobileInput(bool activate)
     {
-        _isMobileInputActive = activate;
+        IsMobileInputActive = activate;
         _mobileInputCanvas.gameObject.SetActive(activate);
+
+        OnMobileInputActiveStateChanged?.Invoke(activate);
     }
 
     public void SetHasGun(bool hasGun)

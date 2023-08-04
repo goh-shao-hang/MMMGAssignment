@@ -3,11 +3,15 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 public class PlayerInputHandler : MonoBehaviour
 {
     private PlayerControls _playerControls;
+
+    private MobileInputManager _mobileInputManager;
+    private MobileInputManager mobileInputManager => _mobileInputManager ??= MobileInputManager.GetInstance();
 
     public Vector2 MoveInput { get; private set; }
     public Vector2 LookInput { get; private set; }
@@ -17,6 +21,9 @@ public class PlayerInputHandler : MonoBehaviour
     public event Action ToggleAimInput;
     public event Action FireInputPressed;
     public event Action FireInputReleased;
+
+    private bool _isMobileInputActive;
+
     private void OnEnable()
     {
         if (_playerControls == null)
@@ -26,12 +33,27 @@ public class PlayerInputHandler : MonoBehaviour
         }
 
         _playerControls.Enable();
+
+        mobileInputManager.OnMobileInputActiveStateChanged += ChangeMobileInputActiveState;
     }
+
+    
 
     private void OnDisable()
     {
         _playerControls.Disable();
+
+        mobileInputManager.OnMobileInputActiveStateChanged -= ChangeMobileInputActiveState;
     }
+
+    private void Update()
+    {
+        if (!_isMobileInputActive)
+            return;
+
+        LookInput = mobileInputManager.MobileLookInput;
+    }
+
 
     private void BindInput()
     {
@@ -45,6 +67,12 @@ public class PlayerInputHandler : MonoBehaviour
         _playerControls.Gameplay.Fire.canceled += ctx => OnFireInputReleased(ctx);
     }
 
+    private void ChangeMobileInputActiveState(bool active)
+    {
+        _isMobileInputActive = active;
+        LookInput = Vector2.zero;
+    }
+
     private void OnMoveInput(InputAction.CallbackContext ctx)
     {
         MoveInput = ctx.ReadValue<Vector2>();
@@ -52,6 +80,9 @@ public class PlayerInputHandler : MonoBehaviour
 
     private void OnLookInput(InputAction.CallbackContext ctx)
     {
+        if (_isMobileInputActive)
+            return;
+
         LookInput = ctx.ReadValue<Vector2>();
     }
 
