@@ -35,7 +35,7 @@ namespace GameCells.Player
         //TODO
         //private bool IsUsingMouse =>
 
-        private void Start()
+        private void Awake()
         {
             if (_cameraFollowTarget == null)
             {
