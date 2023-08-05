@@ -34,6 +34,7 @@ public class PlayerInputHandler : MonoBehaviour
 
         _playerControls.Enable();
 
+        ChangeMobileInputActiveState(mobileInputManager.IsMobileInputActive);
         mobileInputManager.OnMobileInputActiveStateChanged += ChangeMobileInputActiveState;
     }
 

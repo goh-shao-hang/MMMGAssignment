@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1184744393341951544}
   - component: {fileID: 1184744393341951494}
   - component: {fileID: 1184744393341951495}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: DrippingParticles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4827,7 +4827,7 @@ GameObject:
   - component: {fileID: 1981201851}
   - component: {fileID: 6722409174172179248}
   - component: {fileID: 3728569422881335615}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Bullet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4988,7 +4988,7 @@ GameObject:
   - component: {fileID: 1184744394106187577}
   - component: {fileID: 1184744394106187527}
   - component: {fileID: 1184744394106187576}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SurfaceParticles
   m_TagString: Untagged
   m_Icon: {fileID: 0}

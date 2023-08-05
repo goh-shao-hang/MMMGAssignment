@@ -42,7 +42,8 @@ namespace GameCells.Player
             
             _playerAimingCamera.m_Follow = _playerThirdPersonCamera.CameraFollowTarget;
 
-            EquipGun(false);
+            //TODO GUN VERY IMPORTANT BLABLA
+            EquipGun(true);
 
             if (_aimingArmRig != null)
             {

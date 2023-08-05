@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 802770267680285835}
   - component: {fileID: 802770267680285834}
   - component: {fileID: 802770267680285877}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: PickupEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}

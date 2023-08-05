@@ -15,19 +15,26 @@ public class MobileInputManager : Singleton<MobileInputManager>
     [SerializeField] private GameObject _aimButton;
     [SerializeField] private FixedTouchField _cameraRotateField;
 
-    [Header("Settings")]
-    [SerializeField] private float _mobileLookSensitivity;
+    [Header("Optional")]
+    [SerializeField] private Slider _mobileSensitivitySlider;
+
+    //[Header("Settings")]
+    //[SerializeField]
+    private float _mobileLookSensitivity;
 
     public event Action<bool> OnMobileInputActiveStateChanged;
 
     public Vector2 MobileLookInput => _cameraRotateField.TouchDelta * _mobileLookSensitivity;
     public bool IsMobileInputActive { get; private set; }
 
-    private void Awake()
+    private void Start()
     {
         ActivateMobileInput(Application.isMobilePlatform);
+
         SetHasGun(false);
         SetIsAiming(false);
+
+        UpdateMobileSensitivity();
     }
 
     private void Update()
@@ -41,6 +48,14 @@ public class MobileInputManager : Singleton<MobileInputManager>
         }
 
 #endif
+    }
+
+    public void UpdateMobileSensitivity()
+    {
+        if (_mobileSensitivitySlider != null)
+        {
+            _mobileLookSensitivity = _mobileSensitivitySlider.value;
+        }
     }
 
     private void ActivateMobileInput(bool activate)

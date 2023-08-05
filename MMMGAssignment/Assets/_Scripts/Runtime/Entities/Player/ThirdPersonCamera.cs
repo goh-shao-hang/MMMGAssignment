@@ -35,7 +35,7 @@ namespace GameCells.Player
         //TODO
         //private bool IsUsingMouse =>
 
-        private void Awake()
+        private void Start()
         {
             if (_cameraFollowTarget == null)
             {
@@ -45,8 +45,13 @@ namespace GameCells.Player
                 _playerNormalCamera.m_Follow = _cameraFollowTarget;
             }
 
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+            //TODO
+            if (!MobileInputManager.GetInstance().IsMobileInputActive)
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+            }
+
         }
 
         //TODO MOBILE DEBUG
