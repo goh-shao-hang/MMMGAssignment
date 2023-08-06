@@ -10,12 +10,14 @@ namespace GameCells.Player
         [SerializeField] private ThirdPersonMovement _thirdPersonMovement;
         [SerializeField] private ThirdPersonCamera _thirdPersonCamera;
         [SerializeField] private Camera _playerCamera;
+        [SerializeField] private PlayerHUDManager _playerHUDManager;
 
         public void Awake()
         {   
             _thirdPersonMovement.enabled = photonView.IsMine;
             _thirdPersonCamera.enabled = photonView.IsMine;
             _playerCamera.gameObject.SetActive(photonView.IsMine);
+            _playerHUDManager.gameObject.SetActive(photonView.IsMine);
         }
     }
 }

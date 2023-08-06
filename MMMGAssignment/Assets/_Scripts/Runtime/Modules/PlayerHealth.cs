@@ -10,6 +10,8 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     [SerializeField] private int _maxHealth = 100;
     [SerializeField] private GameObject _deathParticles;
 
+    public event Action<float> OnHealthChanged;
+
     private int _currentHealth;
 
     private void Start()
@@ -22,11 +24,13 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         if (!_playerPhotonView.IsMine)
             return;
 
+        //TODO debug damage
+#if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.T))
         {
             TakeDamage(50);
         }
-
+#endif
     }
 
     public void TakeDamage(int damage)
@@ -39,6 +43,8 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     {
         _currentHealth -= damage;
 
+        OnHealthChanged?.Invoke((float)_currentHealth / (float)_maxHealth);
+
         if (_currentHealth <= 0)
         {
             Die();
@@ -47,6 +53,16 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
     public void InstantKill()
     {
+        _playerPhotonView.RPC(nameof(RPC_InstantKill), _playerPhotonView.Owner);
+    }
+
+    [PunRPC]
+    public void RPC_InstantKill()
+    {
+        _currentHealth = 0;
+
+        OnHealthChanged?.Invoke((float)_currentHealth / (float)_maxHealth);
+
         Die();
     }
 

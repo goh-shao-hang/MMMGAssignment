@@ -4952,7 +4952,7 @@ MonoBehaviour:
   _trailParticles: {fileID: 1184744393341951494}
   _hitParticlesPrefab: {fileID: 2250256046876504686, guid: 710cd983ed805c44386188387e873761,
     type: 3}
-  _bulletDamage: 20
+  _bulletDamage: 15
   _bulletSpeed: 30
   _maxBulletLifetime: 5
 --- !u!114 &3728569422881335615
