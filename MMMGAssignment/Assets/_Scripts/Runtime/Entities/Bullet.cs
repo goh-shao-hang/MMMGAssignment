@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using GameCells.Utilities;
+using Photon.Realtime;
 
 public class Bullet : MonoBehaviourPun
 {
@@ -21,6 +22,8 @@ public class Bullet : MonoBehaviourPun
     private Vector3 _hitPosition;
     private Coroutine _selfDestructCO;
 
+    private Player _owner;
+
     private void OnEnable()
     {
         _bulletRigidbody.velocity = transform.forward * _bulletSpeed;
@@ -34,6 +37,11 @@ public class Bullet : MonoBehaviourPun
         _selfDestructCO = StartCoroutine(SelfDestructCO());
     }
 
+    public void SetOwner(Player owner)
+    {
+        _owner = owner;
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (!photonView.IsMine)
@@ -41,8 +49,14 @@ public class Bullet : MonoBehaviourPun
 
         if (Helper.CompareLayer(other.gameObject, _damageableLayers))
         {
-            other.GetComponent<PlayerHealth>()?.TakeDamage(_bulletDamage);
-            DestroyBullet();
+            if (other.TryGetComponent(out PlayerHealth playerHealth))
+            {
+                if (playerHealth.PlayerPhotonView.Owner == _owner)
+                    return;
+
+                other.GetComponent<PlayerHealth>()?.TakeDamage(_bulletDamage);
+                DestroyBullet();
+            }
         }
         else if (Helper.CompareLayer(other.gameObject, _obstacleLayers))
         {

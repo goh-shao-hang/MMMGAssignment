@@ -186,7 +186,8 @@ namespace GameCells.Player
 
         private void SpawnBullet()
         {
-            PhotonNetwork.Instantiate(_bulletPrefab.name, _fireTransform.position, Quaternion.LookRotation(_bulletTarget - _fireTransform.position));
+            Bullet bullet = PhotonNetwork.Instantiate(_bulletPrefab.name, _fireTransform.position, Quaternion.LookRotation(_bulletTarget - _fireTransform.position)).GetComponent<Bullet>();
+            bullet.SetOwner(photonView.Owner);
         }
     }
 }

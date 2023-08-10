@@ -10,6 +10,8 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     [SerializeField] private int _maxHealth = 100;
     [SerializeField] private GameObject _deathParticles;
 
+    public PhotonView PlayerPhotonView => _playerPhotonView;
+
     public event Action<float> OnHealthChanged;
 
     private int _currentHealth;
