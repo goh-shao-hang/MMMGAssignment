@@ -6,6 +6,8 @@ namespace GameCells
 {
     public class GameData : MonoBehaviour
     {
+        public const float RESPAWN_TIME = 3f;
+
         #region Animator Hashes
 
         public static readonly int IS_MOVING_HASH = Animator.StringToHash("isMoving");
