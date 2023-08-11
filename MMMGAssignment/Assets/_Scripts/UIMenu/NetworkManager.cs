@@ -336,7 +336,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         RoomList_UI_Panel.SetActive(panelToBeActivated.Equals(RoomList_UI_Panel.name));
     }
 
-    public void OnApplicationQuit()
+    public void QuitGame()
     {
         Application.Quit();
     }
