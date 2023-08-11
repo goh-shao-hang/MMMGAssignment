@@ -6010,6 +6010,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: MobileInputManager
       objectReference: {fileID: 0}
+    - target: {fileID: 1281676305971115973, guid: 80eb959a9e173004f86d48d91101bb5b,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1281676305971115975, guid: 80eb959a9e173004f86d48d91101bb5b,
         type: 3}
       propertyPath: m_RootOrder
