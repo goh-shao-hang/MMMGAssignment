@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LevelRepository : Singleton<LevelRepository>
+public class PersistentRepository : Singleton<PersistentRepository>
 {
     [SerializeField] private SO_Level[] _levels;
 

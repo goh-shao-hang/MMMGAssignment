@@ -3,9 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerManager : MonoBehaviourPunCallbacks
+public class PlayerManager : MonoBehaviourPun
 {
     [SerializeField] private GameObject _playerPrefab;
 
-    private PhotonView _photonView;
+    
 }

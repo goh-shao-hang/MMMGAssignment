@@ -1725,6 +1725,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a369e34f13e53f40828d500ffcb6131, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _gameManagerPrefab: {fileID: 658095325772284506, guid: e99700627407143408db7bc98d5b68a5,
+    type: 3}
   playerNameInput: {fileID: 77578436}
   Login_UI_Panel: {fileID: 1628250542}
   GameOptions_UI_Panel: {fileID: 456628322}

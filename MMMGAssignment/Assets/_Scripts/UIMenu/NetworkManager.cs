@@ -8,6 +8,8 @@ using TMPro;
 
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
+    [Header("Dependencies")]
+    [SerializeField] private GameManager _gameManagerPrefab;
 
     [Header("Login UI Panel")]
     public TMP_InputField playerNameInput;
@@ -335,21 +337,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     private void StartGame()
     {
-        //TODO start game
-        StartCoroutine(LoadLevel(LevelRepository.GetInstance().GetRandomLevel().SceneName));
-    }
-
-    private IEnumerator LoadLevel(string levelName)
-    {
-        PhotonNetwork.LoadLevel(levelName);
-
-        while (PhotonNetwork.LevelLoadingProgress < 1)
-        {
-            //Loading Screen Implementation
-
-            Debug.Log(PhotonNetwork.LevelLoadingProgress);
-            yield return null;
-        }
+        GameManager gameManager = PhotonNetwork.Instantiate(_gameManagerPrefab.name, Vector3.zero, Quaternion.identity).GetComponent<GameManager>();
+        gameManager.StartGame();
     }
 
     #endregion

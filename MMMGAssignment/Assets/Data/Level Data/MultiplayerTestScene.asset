@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9f4fa6b7f9d5a9428e7bc79ee306856, type: 3}
   m_Name: MultiplayerTestScene
   m_EditorClassIdentifier: Assembly-CSharp::SO_Level
-  LevelName: Ring Rumble
+  LevelName: The Test Room Of Death
   RoundDuration: 120
   SceneName: MultiplayerTestScene
   HasTeam: 1
-  CanRespawn: 0
-  StartWithGun: 0
+  CanRespawn: 1
+  StartWithGun: 1
   EndWhenPlayersEliminated: 0
   PlayersEliminationCount: 0
