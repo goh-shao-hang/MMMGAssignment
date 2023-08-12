@@ -2,6 +2,7 @@ using GameCells.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -18,6 +19,7 @@ public class MobileInputManager : Singleton<MobileInputManager>
 
     [Header("Optional")]
     [SerializeField] private Slider _mobileSensitivitySlider;
+    [SerializeField] private TMP_Text _mobileSensitivityText;
     [SerializeField] private float _shootJoystickSensitivty = 0.1f;
 
     public event Action<bool> OnMobileInputActiveStateChanged;
@@ -58,7 +60,10 @@ public class MobileInputManager : Singleton<MobileInputManager>
     {
         if (_mobileSensitivitySlider != null)
         {
-            _mobileLookSensitivity = _mobileSensitivitySlider.value;
+            _mobileLookSensitivity = _mobileSensitivitySlider.value * 0.01f;
+
+            if (_mobileSensitivityText != null)
+                _mobileSensitivityText.SetText($"Sensitivity: {_mobileSensitivitySlider.value}");
         }
     }
 
