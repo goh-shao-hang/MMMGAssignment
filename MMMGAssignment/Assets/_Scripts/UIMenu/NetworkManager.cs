@@ -49,6 +49,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
         cachedRoomList = new Dictionary<string, RoomInfo>();
         roomListGameobjects = new Dictionary<string, GameObject>();
+
+        //TODO sync room
+        PhotonNetwork.AutomaticallySyncScene = true;
     }
 
     // Update is called once per frame
@@ -120,7 +123,13 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         PhotonNetwork.LeaveRoom();
     }
 
-
+    public void OnStartGameButtonClicked()
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            StartGame();
+        }
+    }
 
     #endregion
 
@@ -322,6 +331,25 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         }
 
         roomListGameobjects.Clear();
+    }
+
+    private void StartGame()
+    {
+        //TODO start game
+        StartCoroutine(LoadLevel(LevelRepository.GetInstance().GetRandomLevel().SceneName));
+    }
+
+    private IEnumerator LoadLevel(string levelName)
+    {
+        PhotonNetwork.LoadLevel(levelName);
+
+        while (PhotonNetwork.LevelLoadingProgress < 1)
+        {
+            //Loading Screen Implementation
+
+            Debug.Log(PhotonNetwork.LevelLoadingProgress);
+            yield return null;
+        }
     }
 
     #endregion
