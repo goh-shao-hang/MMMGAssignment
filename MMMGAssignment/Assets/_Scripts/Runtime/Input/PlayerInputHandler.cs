@@ -24,6 +24,8 @@ public class PlayerInputHandler : MonoBehaviour
 
     private bool _isMobileInputActive;
 
+    public bool IsUsingMouse => Mouse.current.IsActuated();
+
     private void OnEnable()
     {
         if (_playerControls == null)
@@ -52,7 +54,10 @@ public class PlayerInputHandler : MonoBehaviour
         if (!_isMobileInputActive)
             return;
 
-        LookInput = mobileInputManager.MobileLookInput;
+        if (!mobileInputManager.IsShootButtonHeld) //If shoot button is held, the shooting joystick will handle look input instead
+        {
+            LookInput = mobileInputManager.TouchFieldInput;
+        }
     }
 
 
@@ -81,10 +86,13 @@ public class PlayerInputHandler : MonoBehaviour
 
     private void OnLookInput(InputAction.CallbackContext ctx)
     {
-        if (_isMobileInputActive)
-            return;
-
         LookInput = ctx.ReadValue<Vector2>();
+
+        //If using shoot button to rotate camera, handle the sensitivity
+        if (_isMobileInputActive && mobileInputManager.IsShootButtonHeld)
+        {
+            LookInput *= mobileInputManager.ShootJoystickSensitivity;
+        }
     }
 
     private void OnJumpInput(InputAction.CallbackContext ctx)

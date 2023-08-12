@@ -14,18 +14,22 @@ public class MobileInputManager : Singleton<MobileInputManager>
     [SerializeField] private GameObject _aimingUI;
     [SerializeField] private GameObject _aimButton;
     [SerializeField] private FixedTouchField _cameraRotateField;
+    [SerializeField] private ShootButton _shootButton;
 
     [Header("Optional")]
     [SerializeField] private Slider _mobileSensitivitySlider;
-
-    //[Header("Settings")]
-    //[SerializeField]
-    private float _mobileLookSensitivity;
+    [SerializeField] private float _shootJoystickSensitivty = 0.1f;
 
     public event Action<bool> OnMobileInputActiveStateChanged;
+    public float ShootJoystickSensitivity => _shootJoystickSensitivty;
 
-    public Vector2 MobileLookInput => _cameraRotateField.TouchDelta * _mobileLookSensitivity;
     public bool IsMobileInputActive { get; private set; }
+    //When this is held, ignore camera rotation via touch field and use this joystick for cam rotation instead
+    public bool IsShootButtonHeld => _shootButton.IsShootButtonHeld;
+
+    public Vector2 TouchFieldInput => _cameraRotateField.TouchDelta * _mobileLookSensitivity;
+
+    private float _mobileLookSensitivity;
 
     private void Start()
     {
