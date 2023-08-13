@@ -153,6 +153,13 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         Debug.Log(PhotonNetwork.CurrentRoom.Name + " is created.");
     }
 
+    public override void OnCreateRoomFailed(short returnCode, string message)
+    {
+        base.OnCreateRoomFailed(returnCode, message);
+
+        Debug.LogError($"Room creation failed: {message}");
+    }
+
     public override void OnJoinedRoom()
     {
         Debug.Log(PhotonNetwork.LocalPlayer.NickName + " joined to " + PhotonNetwork.CurrentRoom.Name);

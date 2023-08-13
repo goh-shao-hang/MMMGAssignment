@@ -11,8 +11,7 @@ public class GameManager : Singleton<GameManager>
     public PlayerManager playerManagerPrefab => _playerManagerPrefab;
 
 
-    public event Action OnLevelReady;
-    public event Action OnLevelEnd;
+    public event Action OnSceneReady;
 
     public int CurrentRoundNumber { get; private set; }
     public bool IsLevelUnderProgress { get; private set; }
@@ -33,9 +32,9 @@ public class GameManager : Singleton<GameManager>
 
         while (PhotonNetwork.LevelLoadingProgress < 1)
         {
-            //Loading Screen Implementation
+            //TODO Loading Screen Implementation
 
-            Debug.Log(PhotonNetwork.LevelLoadingProgress);
+            Debug.Log($"Loading Scene: {PhotonNetwork.LevelLoadingProgress}");
             yield return null;
         }
 
@@ -44,7 +43,7 @@ public class GameManager : Singleton<GameManager>
 
     public void StartCurrentLevel()
     {
-        OnLevelReady?.Invoke();
+        OnSceneReady?.Invoke();
     }
 
     public void EndCurrentLevel()
