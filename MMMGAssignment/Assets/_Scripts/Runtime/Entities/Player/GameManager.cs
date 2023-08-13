@@ -8,6 +8,11 @@ using UnityEngine;
 public class GameManager : Singleton<GameManager>
 {
     [SerializeField] private PlayerManager _playerManagerPrefab;
+    public PlayerManager playerManagerPrefab => _playerManagerPrefab;
+
+
+    public event Action OnLevelReady;
+    public event Action OnLevelEnd;
 
     public int CurrentRoundNumber { get; private set; }
     public bool IsLevelUnderProgress { get; private set; }
@@ -33,11 +38,13 @@ public class GameManager : Singleton<GameManager>
             Debug.Log(PhotonNetwork.LevelLoadingProgress);
             yield return null;
         }
+
+        StartCurrentLevel();
     }
 
     public void StartCurrentLevel()
     {
-
+        OnLevelReady?.Invoke();
     }
 
     public void EndCurrentLevel()
