@@ -80,8 +80,8 @@ namespace GameCells.Player
                 int invertX = _invertXAxis ? -1 : 1;
                 int invertY = _invertYAxis ? -1 : 1;
 
-                _yRotation += _playerInputHandler.LookInput.x * _xSensitivity * Time.deltaTime * invertX;
-                _xRotation += _playerInputHandler.LookInput.y * _ySensitivity * Time.deltaTime * invertY;
+                _yRotation += _playerInputHandler.LookInput.x * _xSensitivity * invertX * Time.deltaTime;
+                _xRotation += _playerInputHandler.LookInput.y * _ySensitivity * invertY * Time.deltaTime;
             }
 
             _xRotation = Mathf.Clamp(_xRotation, _maxLookDownAngle, _maxLookUpAngle);
