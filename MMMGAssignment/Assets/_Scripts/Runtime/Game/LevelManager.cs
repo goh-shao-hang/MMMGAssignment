@@ -40,11 +40,6 @@ public class LevelManager : Singleton<LevelManager>
 
     private void Update()
     {
-        //TODO start debug
-        /*if (Input.GetKeyDown(KeyCode.S))
-        {
-            StartCountdown();
-        }*/
         
     }
 

@@ -52,7 +52,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         cachedRoomList = new Dictionary<string, RoomInfo>();
         roomListGameobjects = new Dictionary<string, GameObject>();
 
-        //TODO sync room
         PhotonNetwork.AutomaticallySyncScene = true;
     }
 
@@ -346,6 +345,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
         GameManager gameManager = PhotonNetwork.Instantiate(_gameManagerPrefab.name, Vector3.zero, Quaternion.identity).GetComponent<GameManager>();
         gameManager.StartGame();
+
+        PhotonNetwork.CurrentRoom.IsVisible = false; //As game starts, this room is no longer visible
+        PhotonNetwork.CurrentRoom.IsOpen = false; //As game starts, this room is no longer joinable
     }
 
     #endregion
