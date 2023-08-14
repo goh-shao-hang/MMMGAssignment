@@ -50,6 +50,7 @@ MonoBehaviour:
   - RPC_InstantKill
   - RPC_StartLevel
   - RPC_StartCountdown
+  - RPC_SpawnDeathParticles
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

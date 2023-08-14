@@ -17,7 +17,9 @@ namespace GameCells.Player
             _thirdPersonMovement.enabled = photonView.IsMine;
             _thirdPersonCamera.enabled = photonView.IsMine;
             _playerCamera.gameObject.SetActive(photonView.IsMine);
-            _playerHUDManager.gameObject.SetActive(photonView.IsMine);
+            _playerHUDManager.gameObject.SetActive(false);
+            //TODO HUD
+            //_playerHUDManager.gameObject.SetActive(photonView.IsMine);
         }
     }
 }

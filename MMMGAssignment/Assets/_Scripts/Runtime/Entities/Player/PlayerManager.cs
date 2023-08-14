@@ -1,4 +1,5 @@
 using Photon.Pun;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,75 +10,54 @@ namespace GameCells.Player
     {
         [Header("Dependencies")]
         [SerializeField] private GameObject _playerControllerPrefab;
-        [SerializeField] private PlayerHUDManager _playerHUDManager;
-        [SerializeField] private GameObject _deathParticles;
+
+        //EVENTS
+        public event Action<string> OnUsernameChanged;
+        public event Action<float> OnHealthChanged;
+
+        private GameObject PlayerObject = null;
 
         private LevelManager _levelManager;
         private LevelManager levelManager => _levelManager ??= LevelManager.GetInstance();
-
-        private PlayerHealth _playerHealth;
 
         private void Awake()
         {
             if (photonView.IsMine)
             {
+                UpdateUsername();
                 SpawnPlayerController();
             }
         }
 
-        private void OnEnable()
+        private void UpdateUsername()
         {
-        }
-
-        private void OnDisable()
-        {
+            OnUsernameChanged?.Invoke(photonView.Owner.NickName);
         }
 
         private void SpawnPlayerController()
         {
-            GameObject playerObject;
-
             if (levelManager != null)
             {
-                playerObject = PhotonNetwork.Instantiate(_playerControllerPrefab.name, levelManager.GetRandomSpawnPoint().position, Quaternion.identity);
+                PlayerObject = PhotonNetwork.Instantiate(_playerControllerPrefab.name, levelManager.GetRandomSpawnPoint().position, Quaternion.identity);
             }
             else
             {
                 //TODO better spawn
-                playerObject = PhotonNetwork.Instantiate(_playerControllerPrefab.name, FindObjectOfType<NetworkDebugger>().SpawnPoint.position, Quaternion.identity);
+                PlayerObject = PhotonNetwork.Instantiate(_playerControllerPrefab.name, FindObjectOfType<NetworkDebugger>().SpawnPoint.position, Quaternion.identity);
             }
 
-            _playerHealth = playerObject.GetComponent<PlayerHealth>();
+            PlayerObject.GetComponent<PlayerHealth>().Initialize(this);
         }
 
-        private void OnPlayerHealthChanged()
+        public void OnPlayerHealthChanged(float healthPercentage)
         {
-            /*//Update UI
-            _playerHUDManager.UpdateHealthUI(_playerHealth.CurrentHealth / _playerHealth.MaxHealth);
-
-            //Handle death
-            if (_playerHealth.CurrentHealth <= 0)
-            {
-                Die();
-            }*/
+            OnHealthChanged?.Invoke(healthPercentage);
         }
 
-        public void Die()
+        public void OnPlayerDeath()
         {
-            photonView.RPC(nameof(RPC_Die), RpcTarget.All);
-        }
-
-        [PunRPC]
-        private void RPC_Die()
-        {
-            if (_deathParticles != null)
-            {
-                //TODO: particle in seperate script
-                GameObject particles = Instantiate(_deathParticles, transform.position + Vector3.up, Quaternion.identity);
-                Destroy(particles, 3f);
-            }
-
-            Destroy(gameObject);
+            PhotonNetwork.Destroy(PlayerObject);
+            PlayerObject = null;
         }
     }
 }
