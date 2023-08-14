@@ -20,7 +20,7 @@ namespace GameCells.Player
         private LevelManager _levelManager;
         private LevelManager levelManager => _levelManager ??= LevelManager.GetInstance();
 
-        private void Awake()
+        private void Start()
         {
             if (photonView.IsMine)
             {

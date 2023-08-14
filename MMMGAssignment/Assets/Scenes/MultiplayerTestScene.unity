@@ -2873,7 +2873,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1102851709
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3257,13 +3257,14 @@ GameObject:
   - component: {fileID: 1238640845}
   - component: {fileID: 1238640847}
   - component: {fileID: 1238640848}
+  - component: {fileID: 1238640849}
   m_Layer: 0
   m_Name: LevelManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1238640845
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3280,8 +3281,9 @@ MonoBehaviour:
   _levelData: {fileID: 11400000, guid: 59803616d3522464eb28feac1e4acaf1, type: 2}
   _team1SpawnPoints:
   - {fileID: 2122230816}
+  _team2SpawnPoints:
   - {fileID: 675390035}
-  _team2SpawnPoints: []
+  _levelTimer: {fileID: 1238640849}
 --- !u!4 &1238640846
 Transform:
   m_ObjectHideFlags: 0
@@ -3327,13 +3329,25 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1238640844}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ffc398cf76e6d458caf303b5fceea504, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   Countdown: 3
   Text: {fileID: 1210922880}
+--- !u!114 &1238640849
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1238640844}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da9285066b4b8db43aa9d2bdb9c2a3a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!43 &1262928104
 Mesh:
   m_ObjectHideFlags: 0

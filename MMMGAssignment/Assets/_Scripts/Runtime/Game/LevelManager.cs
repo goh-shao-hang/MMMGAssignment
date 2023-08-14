@@ -1,3 +1,4 @@
+using GameCells.PhotonNetworking;
 using GameCells.Utilities;
 using Photon.Pun;
 using Photon.Pun.UtilityScripts;
@@ -13,6 +14,10 @@ public class LevelManager : Singleton<LevelManager>
     [SerializeField] private Transform[] _team1SpawnPoints;
     [Tooltip("Leave this empty if there is no team.")] 
     [SerializeField] private Transform[] _team2SpawnPoints;
+
+    //TODO TIMER
+    [Space]
+    [SerializeField] private NetworkTimer _levelTimer;
 
     public ELevelState _levelState { get; private set; }
 
@@ -56,7 +61,9 @@ public class LevelManager : Singleton<LevelManager>
 
         if (PhotonNetwork.IsMasterClient)
         {
-            CountdownTimer.SetStartTime();
+            //TODO TIMER AGAIN
+            //CountdownTimer.SetStartTime();
+            _levelTimer.ServerStartTimer(3f);
         }
     }
 
