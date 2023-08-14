@@ -4,16 +4,21 @@ using Photon.Pun;
 using Photon.Pun.UtilityScripts;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class LevelManager : Singleton<LevelManager>
 {
     [Header("Dependencies")]
+    [SerializeField] private TMP_Text _countdownText;
     [SerializeField] private PhotonView _photonView;
     [SerializeField] private SO_Level _levelData;
     [SerializeField] private Transform[] _team1SpawnPoints;
     [Tooltip("Leave this empty if there is no team.")] 
     [SerializeField] private Transform[] _team2SpawnPoints;
+
+    [Header("Settings")]
+    [SerializeField] private float _countdownDuration = 3f;
 
     //TODO TIMER
     [Space]
@@ -23,6 +28,8 @@ public class LevelManager : Singleton<LevelManager>
 
     private GameManager _gameManager;
     private GameManager gameManager => _gameManager ??= GameManager.GetInstance();
+
+    private bool _underCountdown = false;
 
     private void Start()
     {
@@ -34,18 +41,14 @@ public class LevelManager : Singleton<LevelManager>
     {
         //TODO start countdown instead?
         gameManager.OnSceneReady += StartCountdown;
-        CountdownTimer.OnCountdownTimerHasExpired += StartLevel;
+        _levelTimer.OnTimerExpired += StartLevel;
     }
 
     private void OnDisable()
     {
         gameManager.OnSceneReady -= StartCountdown;
-        CountdownTimer.OnCountdownTimerHasExpired -= StartLevel;
-    }
+        _levelTimer.OnTimerExpired -= StartLevel;
 
-    private void Update()
-    {
-        
     }
 
     private void StartCountdown()
@@ -61,14 +64,17 @@ public class LevelManager : Singleton<LevelManager>
 
         if (PhotonNetwork.IsMasterClient)
         {
-            //TODO TIMER AGAIN
-            //CountdownTimer.SetStartTime();
-            _levelTimer.ServerStartTimer(3f);
+            _levelTimer.ServerStartTimer(_countdownDuration);
         }
+
+        _underCountdown = true;
+        StartCoroutine(StartCountdownCO());
     }
 
     private void StartLevel()
     {
+        _underCountdown = false;
+
         SpawnLocalPlayerManager();
     }
 
@@ -80,5 +86,19 @@ public class LevelManager : Singleton<LevelManager>
     public Transform GetRandomSpawnPoint()
     {
         return _team1SpawnPoints[Random.Range(0, _team1SpawnPoints.Length)];
+    }
+
+    private IEnumerator StartCountdownCO()
+    {
+        _countdownText.gameObject.SetActive(true);
+
+        while (_underCountdown)
+        {
+            _countdownText.text = _levelTimer.CurrentRemainingTime.ToString("n0");
+
+            yield return null;
+        }
+
+        _countdownText.gameObject.SetActive(false);
     }
 }

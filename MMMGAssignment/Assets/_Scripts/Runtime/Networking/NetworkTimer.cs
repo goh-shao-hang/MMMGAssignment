@@ -20,6 +20,8 @@ namespace GameCells.PhotonNetworking
         private int _timerStartTimestamp;
         private float _currentRemainingTime;
 
+        public float CurrentRemainingTime => _currentRemainingTime;
+
         public override void OnEnable()
         {
             base.OnEnable();
