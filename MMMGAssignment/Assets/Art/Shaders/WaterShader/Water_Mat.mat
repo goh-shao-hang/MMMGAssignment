@@ -61,5 +61,5 @@ Material:
     m_Colors:
     - _DeepColor: {r: 0, g: 0.26705018, b: 1, a: 0.5019608}
     - _FoamColor: {r: 1, g: 1, b: 1, a: 0.7490196}
-    - _ShallowColor: {r: 0, g: 0.7882352, b: 1, a: 0.29803923}
+    - _ShallowColor: {r: 1, g: 0.85740197, b: 0, a: 0.29803923}
   m_BuildTextureStacks: []
