@@ -9,38 +9,62 @@ namespace GameCells.PhotonNetworking
 {
     public class NetworkTimer : MonoBehaviourPunCallbacks
     {
-        public const string START_TIME = "StartTime";
+        public event Action OnTimerExpired;
 
-        public event Action OnTimerEndEvent;
+        public const string START_TIMESTAMP_HASH = "StartTime";
+        public const string TIMER_DURATION_HASH = "TimerDuration";
 
         public bool IsRunning { get; private set; }
 
-        public int StartTime { get; private set; }
-        public float Duration { get; private set; }
-        public float TimeRemaining { get; private set; }
+        private float _duration;
+        private int _timerStartTimestamp;
+        private float _currentRemainingTime;
+
+        public override void OnEnable()
+        {
+            base.OnEnable();
+
+            if (IsRunning)
+                return;
+
+            //Prevent late connectors from missing the timer
+            Hashtable roomProperties = PhotonNetwork.CurrentRoom.CustomProperties;
+
+            if (roomProperties.ContainsKey(START_TIMESTAMP_HASH) && roomProperties.ContainsKey(TIMER_DURATION_HASH))
+            {
+                this._duration = (float)(roomProperties[TIMER_DURATION_HASH]);
+
+                InitializeTimer((int)roomProperties[START_TIMESTAMP_HASH]);
+            }
+        }
 
         private void Update()
         {
             if (!IsRunning)
                 return;
 
-            TimeRemaining = CalculateTimeRemaining();
-            Debug.Log(TimeRemaining);
+            _currentRemainingTime = CalculateRemainingTime();
+            Debug.Log(_currentRemainingTime);
 
-            if (TimeRemaining <= 0)
-            {
-                OnTimerEnd();
-            }
+            if (_currentRemainingTime <= 0)
+                EndTimer();
         }
 
-        private void OnTimerEnd()
+        private void StartTimer()
+        {
+            IsRunning = true;
+            Debug.Log("TIMER START");
+        }
+
+        private void EndTimer()
         {
             IsRunning = false;
             Debug.Log("TIMER END");
 
-            OnTimerEndEvent?.Invoke();
+            OnTimerExpired?.Invoke();
         }
 
+        //Called by Master Client only
         public void ServerStartTimer(float duration)
         {
             if (IsRunning)
@@ -49,49 +73,48 @@ namespace GameCells.PhotonNetworking
                 return;
             }
 
-            StartTime = PhotonNetwork.ServerTimestamp;
+            this._timerStartTimestamp = PhotonNetwork.ServerTimestamp;
 
             Hashtable properties = new Hashtable()
             {
-                {START_TIME, StartTime}
+                {START_TIMESTAMP_HASH, _timerStartTimestamp},
+                {TIMER_DURATION_HASH, duration}
             };
+
             PhotonNetwork.CurrentRoom.SetCustomProperties(properties);
-
-            Duration = duration;
-            IsRunning = true;
-            Debug.Log($"Timer started with duration of {duration}");
-        }
-
-        public void ClientStartTimer(float duration)
-        {
-            if (IsRunning)
-            {
-                Debug.LogError("Timer is already running!");
-                return;
-            }
-
-            Duration = duration;
-            IsRunning = true;
-            Debug.Log($"Timer started with duration of {duration}");
-        }
-
-        private float CalculateTimeRemaining()
-        {
-            int timer = PhotonNetwork.ServerTimestamp - this.StartTime;
-            return this.Duration - timer / 1000f;
         }
 
         public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
         {
             base.OnRoomPropertiesUpdate(propertiesThatChanged);
 
-            if (PhotonNetwork.IsMasterClient)
-                return;
+            if (propertiesThatChanged.ContainsKey(START_TIMESTAMP_HASH) && propertiesThatChanged.ContainsKey(TIMER_DURATION_HASH))
+            {
+                this._duration = (float)(propertiesThatChanged[TIMER_DURATION_HASH]);
 
-            if (!propertiesThatChanged.ContainsKey(START_TIME))
-                return;
+                InitializeTimer((int)propertiesThatChanged[START_TIMESTAMP_HASH]);
+            }
+        }
 
-            ClientStartTimer((int)(propertiesThatChanged[START_TIME]));
+        private void InitializeTimer(int startTimestamp)
+        {
+            this._timerStartTimestamp = startTimestamp;
+
+            if (CalculateRemainingTime() > 0)
+            {
+                StartTimer();
+            }
+            else
+            {
+                EndTimer();
+            }
+        }
+
+        private float CalculateRemainingTime()
+        {
+            float timePassed = (PhotonNetwork.ServerTimestamp - _timerStartTimestamp) / 1000; //Convert milliseconds to seconds
+
+            return _duration - timePassed;
         }
     }
 }
