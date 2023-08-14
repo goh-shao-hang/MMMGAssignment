@@ -4827,6 +4827,7 @@ GameObject:
   - component: {fileID: 1981201851}
   - component: {fileID: 6722409174172179248}
   - component: {fileID: 3728569422881335615}
+  - component: {fileID: -3855866347880797891}
   m_Layer: 8
   m_Name: Bullet
   m_TagString: Untagged
@@ -4977,6 +4978,22 @@ MonoBehaviour:
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!114 &-3855866347880797891
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1184744393568784017}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 671becd0f0104154e8b35d3d13036ffd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  paintColor: {r: 0.7029867, g: 0.14413491, b: 0.745283, a: 0}
+  radius: 1
+  strength: 1
+  hardness: 1
 --- !u!1 &1184744394106187578
 GameObject:
   m_ObjectHideFlags: 0

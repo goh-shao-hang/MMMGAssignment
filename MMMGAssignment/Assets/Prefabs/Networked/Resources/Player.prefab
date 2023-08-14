@@ -1722,6 +1722,8 @@ MonoBehaviour:
   _aimingArmRig: {fileID: 7473229420145728929}
   _ikTargetTransform: {fileID: 909672342478632195}
   _crossHairCanvas: {fileID: 1172841206}
+  inkParticle: {fileID: 2250256046876504686, guid: 112e6bbbbddd8e8478fe5ce457ff6d88,
+    type: 3}
   _fireCD: 0.2
   _targetableLayers:
     serializedVersion: 2
