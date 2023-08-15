@@ -6,6 +6,11 @@ namespace GameCells
 {
     public class GameData : MonoBehaviour
     {
+        //TODO ROUNDS
+        public const int ROUNDS_PER_GAME = 3;
+
+        public const float LEVEL_COUNTDOWN_TIME = 3f;
+        public const float LEVEL_END_WAITING_TIME = 3f;
         public const float RESPAWN_TIME = 3f;
 
         #region Animator Hashes

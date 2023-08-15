@@ -8,6 +8,8 @@ using TMPro;
 
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
+    [Header("Dependencies")]
+    [SerializeField] private GameObject _gameManagerPrefab;
 
     [Header("Login UI Panel")]
     public TMP_InputField playerNameInput;
@@ -42,6 +44,11 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     #region Unity Methods
 
+    private void Awake()
+    {
+        PhotonNetwork.AutomaticallySyncScene = true;
+    }
+
     // Start is called before the first frame update
     private void Start()
     {
@@ -49,6 +56,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
         cachedRoomList = new Dictionary<string, RoomInfo>();
         roomListGameobjects = new Dictionary<string, GameObject>();
+
     }
 
     // Update is called once per frame
@@ -120,7 +128,13 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         PhotonNetwork.LeaveRoom();
     }
 
-
+    public void OnStartGameButtonClicked()
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            StartGame();
+        }
+    }
 
     #endregion
 
@@ -140,6 +154,13 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public override void OnCreatedRoom()
     {
         Debug.Log(PhotonNetwork.CurrentRoom.Name + " is created.");
+    }
+
+    public override void OnCreateRoomFailed(short returnCode, string message)
+    {
+        base.OnCreateRoomFailed(returnCode, message);
+
+        Debug.LogError($"Room creation failed: {message}");
     }
 
     public override void OnJoinedRoom()
@@ -322,6 +343,17 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         }
 
         roomListGameobjects.Clear();
+    }
+
+    private void StartGame()
+    {
+        if (!PhotonNetwork.IsMasterClient)
+            return;
+
+        GameManager gameManager = Instantiate(_gameManagerPrefab, Vector3.zero, Quaternion.identity).GetComponent<GameManager>();
+
+        PhotonNetwork.CurrentRoom.IsVisible = false; //As game starts, this room is no longer visible
+        PhotonNetwork.CurrentRoom.IsOpen = false; //As game starts, this room is no longer joinable
     }
 
     #endregion

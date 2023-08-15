@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using GameCells.Utilities;
 using Photon.Realtime;
+using GameCells.Player;
 
 public class Bullet : MonoBehaviourPun
 {

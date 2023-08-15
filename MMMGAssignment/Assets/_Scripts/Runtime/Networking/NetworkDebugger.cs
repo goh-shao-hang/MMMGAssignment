@@ -14,6 +14,7 @@ public class NetworkDebugger : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject _playerPrefab;
     [SerializeField] private Transform _spawnPoint;
 
+    public Transform SpawnPoint => _spawnPoint;
 
     void Start()
     {

@@ -24,6 +24,7 @@ public class PlayerInputHandler : MonoBehaviour
 
     private bool _isMobileInputActive;
 
+    public bool InputLocked { get; private set; } = false;
     public bool IsUsingMouse => Mouse.current.IsActuated();
 
     private void OnEnable()
@@ -81,11 +82,17 @@ public class PlayerInputHandler : MonoBehaviour
 
     private void OnMoveInput(InputAction.CallbackContext ctx)
     {
+        if (InputLocked)
+            return;
+
         MoveInput = ctx.ReadValue<Vector2>();
     }
 
     private void OnLookInput(InputAction.CallbackContext ctx)
     {
+        if (InputLocked)
+            return;
+
         LookInput = ctx.ReadValue<Vector2>();
 
         //If using shoot button to rotate camera, handle the sensitivity
@@ -97,31 +104,54 @@ public class PlayerInputHandler : MonoBehaviour
 
     private void OnJumpInput(InputAction.CallbackContext ctx)
     {
+        if (InputLocked)
+            return;
+
         JumpInput?.Invoke();
     }
 
     private void OnHoldAimInputStarted(InputAction.CallbackContext ctx)
     {
+        if (InputLocked)
+            return;
+
         HoldAimStarted?.Invoke();
     }
 
     private void OnHoldAimInputEnded(InputAction.CallbackContext ctx)
     {
+        if (InputLocked)
+            return;
+
         HoldAimEnded?.Invoke();
     }
 
     private void OnToggleAimInput(InputAction.CallbackContext ctx)
     {
+        if (InputLocked)
+            return;
+
         ToggleAimInput?.Invoke();
     }
 
     private void OnFireInputPressed(InputAction.CallbackContext ctx)
     {
+        if (InputLocked)
+            return;
+
         FireInputPressed?.Invoke();
     }
 
     private void OnFireInputReleased(InputAction.CallbackContext ctx)
     {
+        if (InputLocked)
+            return;
+
         FireInputReleased?.Invoke();
+    }
+
+    public void LockInput(bool lockInput)
+    {
+        InputLocked = lockInput;
     }
 }
