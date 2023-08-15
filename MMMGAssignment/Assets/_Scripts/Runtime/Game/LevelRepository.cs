@@ -3,13 +3,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PersistentRepository : Singleton<PersistentRepository>
+public class LevelRepository : Singleton<LevelRepository>
 {
     [SerializeField] private SO_Level[] _levels;
+
+    public int NumberOfLevels => _levels.Length;
 
     private void Awake()
     {
         this.SetDontDestroyOnLoad();
+    }
+
+    public SO_Level GetLevel(int levelIndex)
+    {
+        return _levels[0];
     }
 
     public SO_Level GetRandomLevel()

@@ -1725,7 +1725,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a369e34f13e53f40828d500ffcb6131, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _gameManagerPrefab: {fileID: 658095325772284506, guid: e99700627407143408db7bc98d5b68a5,
+  _gameManagerPrefab: {fileID: 1802480550458400687, guid: 38f4701863335184ebc7dd2277b8a5de,
     type: 3}
   playerNameInput: {fileID: 77578436}
   Login_UI_Panel: {fileID: 1628250542}
@@ -5442,6 +5442,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _levels:
+  - {fileID: 11400000, guid: 59803616d3522464eb28feac1e4acaf1, type: 2}
   - {fileID: 11400000, guid: 59803616d3522464eb28feac1e4acaf1, type: 2}
 --- !u!1 &1352165979
 GameObject:

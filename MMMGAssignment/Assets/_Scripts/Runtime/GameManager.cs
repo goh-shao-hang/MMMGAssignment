@@ -37,7 +37,7 @@ public class GameManager : Singleton<GameManager>
         CurrentRoundNumber++;
 
         Debug.Log($"Starting Round {CurrentRoundNumber}");
-        StartCoroutine(LoadLevelCO(PersistentRepository.GetInstance().GetRandomLevel().SceneName));
+        StartCoroutine(LoadLevelCO(LevelRepository.GetInstance().GetRandomLevel().SceneName));
     }
 
     private IEnumerator LoadLevelCO(string levelName)

@@ -9,7 +9,7 @@ using TMPro;
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
     [Header("Dependencies")]
-    [SerializeField] private GameManager _gameManagerPrefab;
+    [SerializeField] private GameObject _gameManagerPrefab;
 
     [Header("Login UI Panel")]
     public TMP_InputField playerNameInput;
@@ -43,6 +43,11 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     private Dictionary<int, GameObject> playerListGameobjects;
 
     #region Unity Methods
+
+    private void Awake()
+    {
+        PhotonNetwork.AutomaticallySyncScene = true;
+    }
 
     // Start is called before the first frame update
     private void Start()
@@ -342,8 +347,10 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     private void StartGame()
     {
-        GameManager gameManager = PhotonNetwork.Instantiate(_gameManagerPrefab.name, Vector3.zero, Quaternion.identity).GetComponent<GameManager>();
-        gameManager.StartGame();
+        if (!PhotonNetwork.IsMasterClient)
+            return;
+
+        BetterGameManager gameManager = Instantiate(_gameManagerPrefab, Vector3.zero, Quaternion.identity).GetComponent<BetterGameManager>();
 
         PhotonNetwork.CurrentRoom.IsVisible = false; //As game starts, this room is no longer visible
         PhotonNetwork.CurrentRoom.IsOpen = false; //As game starts, this room is no longer joinable

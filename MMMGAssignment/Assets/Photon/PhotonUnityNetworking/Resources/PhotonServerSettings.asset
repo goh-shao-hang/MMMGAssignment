@@ -51,6 +51,9 @@ MonoBehaviour:
   - RPC_StartLevel
   - RPC_StartCountdown
   - RPC_SpawnDeathParticles
+  - RPC_LevelCountdown
+  - RPC_LevelEnd
+  - RPC_LevelStart
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

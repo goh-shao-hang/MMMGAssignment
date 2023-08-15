@@ -64,6 +64,7 @@ namespace GameCells.PhotonNetworking
         {
             IsRunning = false;
 
+            Debug.LogError($"{_timerName} expired");
             OnTimerExpired?.Invoke();
         }
 
