@@ -16,7 +16,7 @@ public class LevelRepository : Singleton<LevelRepository>
 
     public SO_Level GetLevel(int levelIndex)
     {
-        return _levels[0];
+        return _levels[levelIndex - 1];
     }
 
     public SO_Level GetRandomLevel()

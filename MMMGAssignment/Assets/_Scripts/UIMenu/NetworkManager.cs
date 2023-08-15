@@ -350,7 +350,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         if (!PhotonNetwork.IsMasterClient)
             return;
 
-        BetterGameManager gameManager = Instantiate(_gameManagerPrefab, Vector3.zero, Quaternion.identity).GetComponent<BetterGameManager>();
+        GameManager gameManager = Instantiate(_gameManagerPrefab, Vector3.zero, Quaternion.identity).GetComponent<GameManager>();
 
         PhotonNetwork.CurrentRoom.IsVisible = false; //As game starts, this room is no longer visible
         PhotonNetwork.CurrentRoom.IsOpen = false; //As game starts, this room is no longer joinable

@@ -1,6 +1,7 @@
-using GameCells.Player;
+using GameCells;
 using GameCells.Utilities;
 using Photon.Pun;
+using Photon.Realtime;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,55 +9,48 @@ using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
 {
-    [SerializeField] private PlayerManager _playerManagerPrefab;
-    public PlayerManager playerManagerPrefab => _playerManagerPrefab;
+    //TODO only exist on master client
+    //TODO in future, handle host change via PunCallbacks
+    
+    private LevelRepository _levelRepository;
+    private LevelRepository levelRepository => _levelRepository ??= LevelRepository.GetInstance();
 
+    private int currentRoundNumber;
 
-    public event Action OnAllPlayersJoinedScene;
+    private SO_Level _currentLevel = null;
 
-    //TODO rounds
-    public int TotalRounds { get; private set; } = 3;
-    public int CurrentRoundNumber { get; private set; }
-    public bool IsLevelUnderProgress { get; private set; }
+    public event Action OnLevelFinishLoading;
+
+    private Player[] _playerList;
 
     private void Awake()
     {
+        //Initialization
         this.SetDontDestroyOnLoad();
-
-        PhotonNetwork.AutomaticallySyncScene = true;
     }
 
-    public void StartGame()
+    private void Start()
     {
-        CurrentRoundNumber = 0;
+        if (!PhotonNetwork.IsMasterClient)
+            return;
+
+        _playerList = PhotonNetwork.PlayerList;
+        currentRoundNumber = 0;
         LoadNextLevel();
     }
 
     private void LoadNextLevel()
     {
-        CurrentRoundNumber++;
+        currentRoundNumber++;
+        _currentLevel = levelRepository.GetLevel(currentRoundNumber);
 
-        Debug.Log($"Starting Round {CurrentRoundNumber}");
-        StartCoroutine(LoadLevelCO(LevelRepository.GetInstance().GetRandomLevel().SceneName));
+        StartCoroutine(LoadNextLevelCO());
     }
 
-    private IEnumerator LoadLevelCO(string levelName)
+    private IEnumerator LoadNextLevelCO()
     {
-        yield return new WaitForSeconds(3);
-
-        //TODO
-        if (!PhotonNetwork.IsMasterClient)
-            yield break;
-
-        PhotonNetwork.LoadLevel("test");
-
-        while (PhotonNetwork.LevelLoadingProgress < 1)
-        {
-            Debug.Log($"Loading Transition");
-            yield return null;
-        }
-
-        PhotonNetwork.LoadLevel(levelName);
+        Debug.LogWarning($"Loading round {currentRoundNumber}: {_currentLevel.LevelName}");
+        PhotonNetwork.LoadLevel(_currentLevel.SceneName);
 
         while (PhotonNetwork.LevelLoadingProgress < 1)
         {
@@ -66,17 +60,12 @@ public class GameManager : Singleton<GameManager>
             yield return null;
         }
 
-        ReadyLevel();
+        OnLevelFinishLoading?.Invoke();
     }
 
-    public void ReadyLevel()
+    public void OnLevelEnd()
     {
-        OnAllPlayersJoinedScene?.Invoke();
-    }
-
-    public void EndCurrentLevel()
-    {
-        if (CurrentRoundNumber == TotalRounds)
+        if (currentRoundNumber == levelRepository.NumberOfLevels)
         {
             EndGame();
         }
@@ -88,9 +77,6 @@ public class GameManager : Singleton<GameManager>
 
     public void EndGame()
     {
-        Destroy(this.gameObject);
-
-        //TODO: go back to lobby
-        Debug.Log("Thanks for playing");
+        Debug.LogError("Game ended");
     }
 }

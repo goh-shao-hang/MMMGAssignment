@@ -7,11 +7,16 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
-public class BetterLevelManager : MonoBehaviourPun
+public class LevelManager : Singleton<LevelManager>
 {
     [Header("Level Data (Required)")]
     [SerializeField] private SO_Level _levelData;
+    public SO_Level LevelData => _levelData;
+
+    [Header("Photon View")]
+    [SerializeField] private PhotonView _photonView;
 
     [Header("Spawn Points")]
     [SerializeField] private float _spawnRadius = 2f;
@@ -20,15 +25,15 @@ public class BetterLevelManager : MonoBehaviourPun
     [SerializeField] private Transform _team2SpawnPoint;
 
     [Header("Timers")]
-    [SerializeField] private NetworkTimer _countdownTimer;
-    [SerializeField] private NetworkTimer _levelTimer;
+    [SerializeField] private BetterNetworkTimer _countdownTimer;
+    [SerializeField] private BetterNetworkTimer _levelTimer;
 
     [Header("UI")]
     [SerializeField] private TMP_Text _countdownTimerText; 
     [SerializeField] private TMP_Text _levelTimerText;
     [SerializeField] private TMP_Text _roundEndText;
 
-    private BetterGameManager _gameManager;
+    private GameManager _gameManager;
 
     private ELevelState _currentLevelState;
 
@@ -45,13 +50,14 @@ public class BetterLevelManager : MonoBehaviourPun
 
         _countdownTimerText.gameObject.SetActive(false);
         _levelTimerText.gameObject.SetActive(false);
+
         _roundEndText.gameObject.SetActive(false);
 
         //Called on master client only
         if (!PhotonNetwork.IsMasterClient)
             return;
 
-        _gameManager = BetterGameManager.GetInstance();
+        _gameManager = GameManager.GetInstance();
     }
 
     private void OnEnable()
@@ -59,7 +65,6 @@ public class BetterLevelManager : MonoBehaviourPun
         if (!PhotonNetwork.IsMasterClient)
             return;
 
-        Debug.LogError("subscribed");
         _gameManager.OnLevelFinishLoading += ServerLevelCountdown;
 
         //Subscribe to timers if is masterClient
@@ -72,7 +77,6 @@ public class BetterLevelManager : MonoBehaviourPun
         if (!PhotonNetwork.IsMasterClient)
             return;
 
-        Debug.LogError("unsubscribed");
         _gameManager.OnLevelFinishLoading -= ServerLevelCountdown;
 
         //Unsubscribe timers if is masterClient
@@ -82,14 +86,16 @@ public class BetterLevelManager : MonoBehaviourPun
 
     public void ServerLevelCountdown()
     {
-        _countdownTimer.ServerStartTimer(GameData.LEVEL_COUNTDOWN_TIME);
-        photonView.RPC(nameof(RPC_LevelCountdown), RpcTarget.All);
+        _countdownTimer.StartTimerAsServer(GameData.LEVEL_COUNTDOWN_TIME);
+        _photonView.RPC(nameof(RPC_LevelCountdown), RpcTarget.All);
     }
 
     [PunRPC]
     private void RPC_LevelCountdown()
     {
         _currentLevelState = ELevelState.Countdown;
+        OnLevelCountdown?.Invoke();
+
         StartCoroutine(CountdownTimerCO());
         Debug.LogWarning("Level countdown");
     }
@@ -109,16 +115,18 @@ public class BetterLevelManager : MonoBehaviourPun
 
     public void ServerLevelStart()
     {
-        _levelTimer.ServerStartTimer(_levelData.RoundDuration);
-        photonView.RPC(nameof(RPC_LevelStart), RpcTarget.All);
-        Debug.LogWarning("Level start");
+        _levelTimer.StartTimerAsServer(_levelData.RoundDuration);
+        _photonView.RPC(nameof(RPC_LevelStart), RpcTarget.All);
     }
 
     [PunRPC]
     private void RPC_LevelStart()
     {
         _currentLevelState = ELevelState.Running;
+        OnLevelCountdown?.Invoke();
+
         StartCoroutine(LevelTimerCO());
+        Debug.LogWarning("Level start");
     }
 
     private IEnumerator LevelTimerCO()
@@ -137,13 +145,15 @@ public class BetterLevelManager : MonoBehaviourPun
     public void ServerLevelEnd()
     {
         StartCoroutine(ServerLevelEndCO());
-        photonView.RPC(nameof(RPC_LevelEnd), RpcTarget.All);
+        _photonView.RPC(nameof(RPC_LevelEnd), RpcTarget.All);
     }
 
     [PunRPC]
     private void RPC_LevelEnd()
     {
         _currentLevelState = ELevelState.Ended;
+        OnLevelEnd?.Invoke();
+
         _roundEndText.gameObject.SetActive(true);
         Debug.LogWarning("Level end");
     }
@@ -151,8 +161,14 @@ public class BetterLevelManager : MonoBehaviourPun
     //Runs on master client only
     private IEnumerator ServerLevelEndCO()
     {
-        Debug.LogError("server end co");
         yield return WaitHandler.GetWaitForSeconds(GameData.LEVEL_END_WAITING_TIME);
         _gameManager.OnLevelEnd();
     }
+
+    //Game loop unrelated functions
+    public Vector3 GetSpawnPoint()
+    {
+        return _team1SpawnPoint.position + new Vector3(Random.Range(-_spawnRadius, _spawnRadius), 0f, Random.Range(-_spawnRadius, _spawnRadius));
+    }
+
 }
