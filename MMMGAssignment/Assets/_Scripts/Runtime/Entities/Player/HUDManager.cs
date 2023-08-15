@@ -17,17 +17,17 @@ namespace GameCells.Player
         {
             if (!_playerManager.photonView.IsMine)
                 Destroy(this.gameObject);
+
+            UpdateUsername(_playerManager.photonView.Owner.NickName);
         }
 
         private void OnEnable()
         {
-            _playerManager.OnUsernameChanged += UpdateUsername;
             _playerManager.OnHealthChanged += UpdateHealthUI;
         }
 
         private void OnDisable()
         {
-            _playerManager.OnUsernameChanged -= UpdateUsername;
             _playerManager.OnHealthChanged -= UpdateHealthUI;
         }
 

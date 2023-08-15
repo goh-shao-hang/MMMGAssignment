@@ -11,7 +11,8 @@ namespace GameCells.Player
         [SerializeField] private PhotonView _playerPhotonView;
         [SerializeField] private GameObject _deathParticles;
 
-        public event Action<float> OnHealthChanged;
+        //TODO
+        //public event Action<float> OnHealthChanged;
 
         public PhotonView PlayerPhotonView => _playerPhotonView;
         private PlayerManager _playerManager;

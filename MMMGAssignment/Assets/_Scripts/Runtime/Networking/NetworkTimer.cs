@@ -9,6 +9,7 @@ namespace GameCells.PhotonNetworking
 {
     public class NetworkTimer : MonoBehaviourPunCallbacks
     {
+        public event Action OnTimerStart;
         public event Action OnTimerExpired;
 
         public const string START_TIMESTAMP_HASH = "StartTime";
@@ -46,7 +47,6 @@ namespace GameCells.PhotonNetworking
                 return;
 
             _currentRemainingTime = CalculateRemainingTime();
-            Debug.Log(_currentRemainingTime);
 
             if (_currentRemainingTime <= 0)
                 EndTimer();
@@ -56,6 +56,8 @@ namespace GameCells.PhotonNetworking
         {
             IsRunning = true;
             Debug.Log("TIMER START");
+
+            OnTimerStart?.Invoke();
         }
 
         private void EndTimer()

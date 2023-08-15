@@ -12,7 +12,6 @@ namespace GameCells.Player
         [SerializeField] private GameObject _playerControllerPrefab;
 
         //EVENTS
-        public event Action<string> OnUsernameChanged;
         public event Action<float> OnHealthChanged;
 
         private GameObject PlayerObject = null;
@@ -20,18 +19,36 @@ namespace GameCells.Player
         private LevelManager _levelManager;
         private LevelManager levelManager => _levelManager ??= LevelManager.GetInstance();
 
-        private void Start()
+        private void Awake()
         {
             if (photonView.IsMine)
             {
-                UpdateUsername();
                 SpawnPlayerController();
             }
         }
 
-        private void UpdateUsername()
+        private void OnEnable()
         {
-            OnUsernameChanged?.Invoke(photonView.Owner.NickName);
+            if (!photonView.IsMine)
+                return;
+
+            if (levelManager != null)
+            {
+                levelManager.OnLevelPreparing += LockPlayerInput;
+                levelManager.OnLevelStart += UnlockPlayerInput;
+            }
+        }
+
+        private void OnDisable()
+        {
+            if (!photonView.IsMine)
+                return;
+
+            if (levelManager != null)
+            {
+                levelManager.OnLevelPreparing -= LockPlayerInput;
+                levelManager.OnLevelStart -= UnlockPlayerInput;
+            }
         }
 
         private void SpawnPlayerController()
@@ -58,6 +75,16 @@ namespace GameCells.Player
         {
             PhotonNetwork.Destroy(PlayerObject);
             PlayerObject = null;
+        }
+
+        public void LockPlayerInput()
+        {
+            PlayerObject.GetComponent<PlayerInputHandler>().LockInput(true);
+        }
+
+        public void UnlockPlayerInput()
+        {
+            PlayerObject.GetComponent<PlayerInputHandler>().LockInput(false);
         }
     }
 }
