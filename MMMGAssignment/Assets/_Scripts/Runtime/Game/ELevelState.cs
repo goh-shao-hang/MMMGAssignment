@@ -5,6 +5,7 @@ using UnityEngine;
 public enum ELevelState
 {
     Preparing = 0,
-    Running = 1,
-    Ended = 2
+    Countdown = 1,
+    Running = 2,
+    Ended = 3
 }

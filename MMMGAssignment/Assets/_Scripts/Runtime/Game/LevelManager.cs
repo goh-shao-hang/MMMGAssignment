@@ -17,7 +17,8 @@ public class LevelManager : Singleton<LevelManager>
     [Header("Dependencies")]
     [SerializeField] private PhotonView _photonView;
     [SerializeField] private TMP_Text _countdownText;
-    [SerializeField] private TMP_Text _timerText;
+    [SerializeField] private TMP_Text _levelTimerText;
+    [SerializeField] private TMP_Text _roundEndText;
 
     [Header("Spawn Points")]
     [SerializeField] private float _spawnRadius = 3f;
@@ -28,33 +29,45 @@ public class LevelManager : Singleton<LevelManager>
 
     [Header("Timers")]
     [SerializeField] private NetworkTimer _countdownTimer;
+    [SerializeField] private NetworkTimer _levelTimer;
 
     [Header("Settings")]
     [SerializeField] private float _countdownDuration = 3f;
 
     public SO_Level LevelData => _levelData;
 
-    public ELevelState _levelState { get; private set; }
+    public ELevelState _levelState { get; private set; } = ELevelState.Preparing;
 
     private GameManager _gameManager;
     private GameManager gameManager => _gameManager ??= GameManager.GetInstance();
 
     //EVENTS
-    public event Action OnLevelPreparing;
+    public event Action OnLevelCountdown;
     public event Action OnLevelStart;
+    public event Action OnLevelEnd;
 
-    private bool _underCountdown = false;
+    private void Awake()
+    {
+        _levelState = ELevelState.Preparing;
+
+        _roundEndText.gameObject.SetActive(false);
+    }
 
     private void OnEnable()
     {
-        gameManager.OnSceneReady += StartCountdown;
+        //Start countdown when all players are ready
+        gameManager.OnAllPlayersJoinedScene += StartCountdown;
+
         _countdownTimer.OnTimerExpired += StartLevel;
+        _levelTimer.OnTimerExpired += EndLevel;
     }
 
     private void OnDisable()
     {
-        gameManager.OnSceneReady -= StartCountdown;
+        gameManager.OnAllPlayersJoinedScene -= StartCountdown;
+
         _countdownTimer.OnTimerExpired -= StartLevel;
+        _levelTimer.OnTimerExpired -= EndLevel;
     }
 
     private void StartCountdown()
@@ -67,30 +80,50 @@ public class LevelManager : Singleton<LevelManager>
     {
         SpawnLocalPlayerManager();
 
-        this._levelState = ELevelState.Preparing;
-        OnLevelPreparing?.Invoke();
-        Debug.Log("Level Preparing...");
+        this._levelState = ELevelState.Countdown;
 
+        OnLevelCountdown?.Invoke();
+        Debug.Log("LEVEL COUNTDOWN");
 
         if (PhotonNetwork.IsMasterClient)
         {
             _countdownTimer.ServerStartTimer(_countdownDuration);
         }
 
-        _underCountdown = true;
         StartCoroutine(StartCountdownCO());
     }
 
     private void StartLevel()
     {
-        _levelState = ELevelState.Running;
-        _underCountdown = false;
-
+        this._levelState = ELevelState.Running;
         OnLevelStart?.Invoke();
+
+        if (PhotonNetwork.IsMasterClient)
+        {
+            _levelTimer.ServerStartTimer(LevelData.RoundDuration);
+        }
+
+        StartCoroutine(LevelTimerCO());
+    }
+
+    private void EndLevel()
+    {
+        this._levelState = ELevelState.Ended;
+        OnLevelEnd?.Invoke();
+
+        _roundEndText.gameObject.SetActive(true);
+        //Time.timeScale = 0f;
+
+        //Tell the game manager that the current level has ended and can go to the next one
+        gameManager.EndCurrentLevel();
+
+        //TODO
+        Destroy(gameObject);
     }
 
     private void SpawnLocalPlayerManager()
     {
+        Debug.LogError("once");
         PhotonNetwork.Instantiate(gameManager.playerManagerPrefab.name, Vector3.zero, Quaternion.identity);
     }
 
@@ -104,7 +137,7 @@ public class LevelManager : Singleton<LevelManager>
     {
         _countdownText.gameObject.SetActive(true);
 
-        while (_underCountdown)
+        while (_levelState == ELevelState.Countdown)
         {
             _countdownText.text = _countdownTimer.CurrentRemainingTime.ToString("n0");
 
@@ -112,5 +145,19 @@ public class LevelManager : Singleton<LevelManager>
         }
 
         _countdownText.gameObject.SetActive(false);
+    }
+
+    private IEnumerator LevelTimerCO()
+    {
+        _levelTimerText.gameObject.SetActive(true);
+
+        while (_levelState == ELevelState.Running)
+        {
+            _levelTimerText.text = _levelTimer.CurrentRemainingTime.ToString("n0");
+
+            yield return null;
+        }
+
+        _levelTimerText.gameObject.SetActive(false);
     }
 }
