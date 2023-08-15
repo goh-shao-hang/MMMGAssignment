@@ -7,23 +7,32 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class LevelManager : Singleton<LevelManager>
 {
+    [Header("Level Data (Required)")]
+    [SerializeField] private SO_Level _levelData;
+
     [Header("Dependencies")]
+    [SerializeField] private PhotonView _photonView;
     [SerializeField] private TMP_Text _countdownText;
     [SerializeField] private TMP_Text _timerText;
-    [SerializeField] private PhotonView _photonView;
-    [SerializeField] private SO_Level _levelData;
-    [SerializeField] private Transform[] _team1SpawnPoints;
-    [Tooltip("Leave this empty if there is no team.")] 
-    [SerializeField] private Transform[] _team2SpawnPoints;
+
+    [Header("Spawn Points")]
+    [SerializeField] private float _spawnRadius = 3f;
+    [SerializeField] private Transform _team1SpawnPoint;
+
+    [Header("Leave this empty if there is no team.")] 
+    [SerializeField] private Transform _team2SpawnPoint;
 
     [Header("Timers")]
     [SerializeField] private NetworkTimer _countdownTimer;
 
     [Header("Settings")]
     [SerializeField] private float _countdownDuration = 3f;
+
+    public SO_Level LevelData => _levelData;
 
     public ELevelState _levelState { get; private set; }
 
@@ -85,9 +94,10 @@ public class LevelManager : Singleton<LevelManager>
         PhotonNetwork.Instantiate(gameManager.playerManagerPrefab.name, Vector3.zero, Quaternion.identity);
     }
 
-    public Transform GetRandomSpawnPoint()
+    public Vector3 GetSpawnPoint()
     {
-        return _team1SpawnPoints[UnityEngine.Random.Range(0, _team1SpawnPoints.Length)];
+        Vector3 spawnPos = _team1SpawnPoint.position + new Vector3(Random.Range(-_spawnRadius, _spawnRadius), 0f, Random.Range(-_spawnRadius, _spawnRadius));
+        return spawnPos;
     }
 
     private IEnumerator StartCountdownCO()

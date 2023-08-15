@@ -15,8 +15,9 @@ MonoBehaviour:
   LevelName: The Test Room Of Death
   RoundDuration: 120
   SceneName: MultiplayerTestScene
+  LevelDescription: Welcome to the test room.
   HasTeam: 1
   CanRespawn: 1
-  StartWithGun: 1
+  StartWithGun: 0
   EndWhenPlayersEliminated: 0
   PlayersEliminationCount: 0

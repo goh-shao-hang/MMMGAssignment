@@ -9,6 +9,8 @@ public class SO_Level : ScriptableObject
     public string LevelName;
     public float RoundDuration;
     public string SceneName;
+    [TextArea]
+    public string LevelDescription;
 
     [Header("Round Settings")]
     [Tooltip("If false, players are individuals")]

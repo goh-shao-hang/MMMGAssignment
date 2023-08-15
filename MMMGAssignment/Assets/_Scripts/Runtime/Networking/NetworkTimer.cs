@@ -9,6 +9,8 @@ namespace GameCells.PhotonNetworking
 {
     public class NetworkTimer : MonoBehaviourPunCallbacks
     {
+        [SerializeField] private string _timerName;
+
         public event Action OnTimerStart;
         public event Action OnTimerExpired;
 

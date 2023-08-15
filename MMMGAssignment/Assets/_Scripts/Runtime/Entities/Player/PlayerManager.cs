@@ -8,6 +8,8 @@ namespace GameCells.Player
 {
     public class PlayerManager : MonoBehaviourPun
     {
+        //Player Manager is responsible for communicating between players without relying on the existance of the player controller
+
         [Header("Dependencies")]
         [SerializeField] private GameObject _playerControllerPrefab;
 
@@ -55,7 +57,7 @@ namespace GameCells.Player
         {
             if (levelManager != null)
             {
-                PlayerObject = PhotonNetwork.Instantiate(_playerControllerPrefab.name, levelManager.GetRandomSpawnPoint().position, Quaternion.identity);
+                PlayerObject = PhotonNetwork.Instantiate(_playerControllerPrefab.name, levelManager.GetSpawnPoint(), Quaternion.identity);
             }
             else
             {
@@ -63,7 +65,11 @@ namespace GameCells.Player
                 PlayerObject = PhotonNetwork.Instantiate(_playerControllerPrefab.name, FindObjectOfType<NetworkDebugger>().SpawnPoint.position, Quaternion.identity);
             }
 
+            //Initialize Health
             PlayerObject.GetComponent<PlayerHealth>().Initialize(this);
+
+            //Initialize Gun
+            PlayerObject.GetComponent<PlayerShooting>().EquipGun(levelManager.LevelData.StartWithGun);
         }
 
         public void OnPlayerHealthChanged(float healthPercentage)

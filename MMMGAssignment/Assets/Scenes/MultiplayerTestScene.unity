@@ -3196,14 +3196,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c16e57dd3b4a58419e51c2f391558ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _levelData: {fileID: 11400000, guid: 59803616d3522464eb28feac1e4acaf1, type: 2}
+  _photonView: {fileID: 1238640847}
   _countdownText: {fileID: 1606958341}
   _timerText: {fileID: 1744729515}
-  _photonView: {fileID: 1238640847}
-  _levelData: {fileID: 11400000, guid: 59803616d3522464eb28feac1e4acaf1, type: 2}
-  _team1SpawnPoints:
-  - {fileID: 2122230816}
-  _team2SpawnPoints:
-  - {fileID: 675390035}
+  _spawnRadius: 3
+  _team1SpawnPoint: {fileID: 2122230816}
+  _team2SpawnPoint: {fileID: 675390035}
   _countdownTimer: {fileID: 1238640849}
   _countdownDuration: 3
 --- !u!4 &1238640846
