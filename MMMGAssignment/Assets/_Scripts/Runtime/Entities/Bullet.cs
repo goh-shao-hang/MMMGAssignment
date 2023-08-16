@@ -13,6 +13,7 @@ public class Bullet : MonoBehaviourPun
     [SerializeField] private LayerMask _obstacleLayers;
     [SerializeField] private ParticleSystem _trailParticles;
     [SerializeField] private ParticleSystem _hitParticlesPrefab;
+    [SerializeField] private GameObject decal;
 
     [Header("Settings")]
     [SerializeField] private int _bulletDamage = 20;
@@ -55,14 +56,94 @@ public class Bullet : MonoBehaviourPun
                     return;
 
                 other.GetComponent<PlayerHealth>()?.TakeDamage(_bulletDamage);
+
+                // Get the hit normal at the collision point
+                Vector3 hitNormal = other.ClosestPoint(transform.position) - transform.position;
+                
+                // Adjust the hit normal to make sure it's pointing outward from the surface
+                hitNormal = AdjustHitNormal(hitNormal);
+
+                // Get the bullet direction (using _bulletRigidbody.velocity.normalized)
+                Vector3 bulletDirection = _bulletRigidbody.velocity.normalized;
+
+                // Place the decal with the adjusted rotation
+                PlaceDecal(transform.position, hitNormal, bulletDirection);
+
                 DestroyBullet();
             }
         }
         else if (Helper.CompareLayer(other.gameObject, _obstacleLayers))
         {
+            Vector3 spawnPosition = transform.position;
+
+            // Cast a ray from spawnPosition downwards to hit the surface and get the hit normal
+            RaycastHit hit;
+            if (Physics.Raycast(spawnPosition + Vector3.up, Vector3.down, out hit))
+            {
+                Vector3 hitNormal = hit.normal;
+                
+                // Adjust the hit normal to make sure it's pointing outward from the surface
+                hitNormal = AdjustHitNormal(hitNormal);
+
+                // Get the bullet direction (using _bulletRigidbody.velocity.normalized)
+                Vector3 bulletDirection = _bulletRigidbody.velocity.normalized;
+
+                // Place the decal with the adjusted rotation
+                PlaceDecal(spawnPosition, hitNormal, bulletDirection);
+            }
+
             DestroyBullet();
         }
     }
+
+    private void PlaceDecal(Vector3 spawnPosition, Vector3 hitNormal, Vector3 bulletDirection)
+    {
+        // Create and position the decal
+        GameObject decalObject = Instantiate(decal, spawnPosition, Quaternion.identity);
+
+        // Determine which rotation method to use based on hitNormal
+        Quaternion rotation;
+        if (IsVerticalSurface(hitNormal))
+        {
+            // Use bulletDirection and up vector to calculate rotation for vertical surfaces
+            rotation = Quaternion.LookRotation(Vector3.Cross(hitNormal, bulletDirection), hitNormal);
+        }
+        else
+        {
+            // Use Quaternion.LookRotation for horizontal surfaces
+            rotation = Quaternion.LookRotation(hitNormal);
+        }
+
+        // Apply the rotation to the decal
+        decalObject.transform.rotation = rotation;
+
+        Destroy(decalObject, 5f); // Destroy the decal after a certain time
+    }
+
+
+    private bool IsVerticalSurface(Vector3 normal)
+    {
+        // Define a threshold angle to determine if the surface is vertical
+        float thresholdAngle = 180f; // You can adjust this value
+
+        // Calculate the angle between the normal and the up direction
+        float angle = Vector3.Angle(normal, Vector3.up);
+
+        // Return true if the angle is greater than the threshold
+        return angle > thresholdAngle;
+    }
+    private Vector3 AdjustHitNormal(Vector3 hitNormal)
+    {
+        // Check if the hit normal is pointing downward (possible floor hit)
+        if (hitNormal.y < 0)
+        {
+            // Invert the hit normal to point outward
+            hitNormal = -hitNormal;
+        }
+
+        return hitNormal;
+    }
+
 
     private IEnumerator SelfDestructCO()
     {

@@ -21,7 +21,7 @@ namespace GameCells.Player
         [SerializeField] private TwoBoneIKConstraint _aimingArmRig;
         [SerializeField] private Transform _ikTargetTransform;
         [SerializeField] private Canvas _crossHairCanvas;
-        [SerializeField] ParticleSystem inkParticle;
+
 
         [Header("Settings")]
         [SerializeField] private float _fireCD = 0.5f;
@@ -88,11 +88,6 @@ namespace GameCells.Player
             HandleGunRotation();
             HandleShooting();
 
-            //InkParticle
-            if (UnityEngine.Input.GetMouseButtonDown(0))
-                inkParticle.Play();
-             else if (UnityEngine.Input.GetMouseButtonUp(0))
-              inkParticle.Stop();
         }
 
         public void EquipGun(bool equip)

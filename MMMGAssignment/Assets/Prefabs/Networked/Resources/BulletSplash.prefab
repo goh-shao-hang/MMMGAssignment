@@ -4884,7 +4884,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   paintColor: {r: 0.651069, g: 0.12335351, b: 0.7924528, a: 0}
-  minRadius: 0.05
-  maxRadius: 0.2
-  strength: 1
+  minRadius: 5
+  maxRadius: 20
+  strength: 10
   hardness: 1
