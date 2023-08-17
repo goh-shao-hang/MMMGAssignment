@@ -49,7 +49,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _FoamAmount: 1
-    - _FoamCutoff: 1
+    - _FoamCutoff: 1.5
     - _FoamScale: 100
     - _FoamSpeed: 1
     - _QueueControl: 0
