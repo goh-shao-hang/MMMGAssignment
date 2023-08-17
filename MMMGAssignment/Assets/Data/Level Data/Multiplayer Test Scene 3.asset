@@ -12,12 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9f4fa6b7f9d5a9428e7bc79ee306856, type: 3}
   m_Name: Multiplayer Test Scene 3
   m_EditorClassIdentifier: 
-  LevelName: The Test Room Of Death 3
-  RoundDuration: 3
-  SceneName: MultiplayerTestScene
-  LevelDescription: Welcome to the third test room
+  LevelName: Purple Zone
+  RoundDuration: 120
+  SceneName: Wong_Level
+  LevelDescription: Welcome to Free For All. Every player for themselves. First to
+    30 wins
   HasTeam: 1
   CanRespawn: 1
-  StartWithGun: 0
+  StartWithGun: 1
   EndWhenPlayersEliminated: 0
   PlayersEliminationCount: 0
