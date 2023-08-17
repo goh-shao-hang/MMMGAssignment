@@ -15,6 +15,9 @@ public class LevelManager : Singleton<LevelManager>
     [SerializeField] private SO_Level _levelData;
     public SO_Level LevelData => _levelData;
 
+    [Header("Player Manager")]
+    [SerializeField] private GameObject _playerManagerPrefab;
+
     [Header("Photon View")]
     [SerializeField] private PhotonView _photonView;
 
@@ -35,7 +38,7 @@ public class LevelManager : Singleton<LevelManager>
 
     private GameManager _gameManager;
 
-    private ELevelState _currentLevelState;
+    public ELevelState CurrentLevelState { get; private set; }
 
     //EVENTS
     public event Action OnLevelPreparing;
@@ -46,7 +49,8 @@ public class LevelManager : Singleton<LevelManager>
     private void Awake()
     {
         //Called on everyone
-        _currentLevelState = ELevelState.Preparing;
+        CurrentLevelState = ELevelState.Preparing;
+        OnLevelPreparing?.Invoke();
 
         _countdownTimerText.gameObject.SetActive(false);
         _levelTimerText.gameObject.SetActive(false);
@@ -93,18 +97,22 @@ public class LevelManager : Singleton<LevelManager>
     [PunRPC]
     private void RPC_LevelCountdown()
     {
-        _currentLevelState = ELevelState.Countdown;
-        OnLevelCountdown?.Invoke();
+        CurrentLevelState = ELevelState.Countdown;
 
         StartCoroutine(CountdownTimerCO());
         Debug.LogWarning("Level countdown");
+
+        //Spawn Player
+        SpawnLocalPlayerManager();
+
+        OnLevelCountdown?.Invoke();
     }
 
     private IEnumerator CountdownTimerCO()
     {
         _countdownTimerText.gameObject.SetActive(true);
 
-        while (_currentLevelState == ELevelState.Countdown)
+        while (CurrentLevelState == ELevelState.Countdown)
         {
             _countdownTimerText.text = _countdownTimer.CurrentRemainingTime.ToString("n0");
             yield return null;
@@ -122,18 +130,19 @@ public class LevelManager : Singleton<LevelManager>
     [PunRPC]
     private void RPC_LevelStart()
     {
-        _currentLevelState = ELevelState.Running;
-        OnLevelCountdown?.Invoke();
+        CurrentLevelState = ELevelState.Running;
 
         StartCoroutine(LevelTimerCO());
         Debug.LogWarning("Level start");
+
+        OnLevelStart?.Invoke();
     }
 
     private IEnumerator LevelTimerCO()
     {
         _levelTimerText.gameObject.SetActive(true);
 
-        while (_currentLevelState == ELevelState.Running)
+        while (CurrentLevelState == ELevelState.Running)
         {
             _levelTimerText.text = _levelTimer.CurrentRemainingTime.ToString("n0");
             yield return null;
@@ -151,21 +160,31 @@ public class LevelManager : Singleton<LevelManager>
     [PunRPC]
     private void RPC_LevelEnd()
     {
-        _currentLevelState = ELevelState.Ended;
-        OnLevelEnd?.Invoke();
+        CurrentLevelState = ELevelState.Ended;
 
         _roundEndText.gameObject.SetActive(true);
         Debug.LogWarning("Level end");
+
+        OnLevelEnd?.Invoke();
     }
 
     //Runs on master client only
     private IEnumerator ServerLevelEndCO()
     {
-        yield return WaitHandler.GetWaitForSeconds(GameData.LEVEL_END_WAITING_TIME);
+        Time.timeScale = 0f;
+
+        yield return WaitHandler.GetWaitForSecondsRealtime(GameData.LEVEL_END_WAITING_TIME);
+
+        Time.timeScale = 1f;
         _gameManager.OnLevelEnd();
     }
 
     //Game loop unrelated functions
+    private void SpawnLocalPlayerManager()
+    {
+        PhotonNetwork.Instantiate(_playerManagerPrefab.name, Vector3.zero, Quaternion.identity);
+    }
+
     public Vector3 GetSpawnPoint()
     {
         return _team1SpawnPoint.position + new Vector3(Random.Range(-_spawnRadius, _spawnRadius), 0f, Random.Range(-_spawnRadius, _spawnRadius));

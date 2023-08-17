@@ -1,3 +1,4 @@
+using GameCells.Utilities;
 using Photon.Pun;
 using System;
 using System.Collections;
@@ -15,8 +16,9 @@ namespace GameCells.Player
 
         //EVENTS
         public event Action<float> OnHealthChanged;
+        public event Action OnPlayerEliminated;
 
-        private GameObject PlayerObject = null;
+        private GameObject PlayerController = null;
 
         private LevelManager _levelManager;
         private LevelManager levelManager => _levelManager ??= LevelManager.GetInstance();
@@ -26,7 +28,6 @@ namespace GameCells.Player
             if (photonView.IsMine)
             {
                 SpawnPlayerController();
-                Debug.LogError($"Spawned {photonView.Owner.NickName}");
             }
         }
 
@@ -39,7 +40,7 @@ namespace GameCells.Player
             {
                 levelManager.OnLevelCountdown += LockPlayerInput;
                 levelManager.OnLevelStart += UnlockPlayerInput;
-                levelManager.OnLevelEnd += DestroyPlayer;
+                levelManager.OnLevelEnd += LockPlayerInput;
             }
         }
 
@@ -52,7 +53,7 @@ namespace GameCells.Player
             {
                 levelManager.OnLevelCountdown -= LockPlayerInput;
                 levelManager.OnLevelStart -= UnlockPlayerInput;
-                levelManager.OnLevelEnd -= DestroyPlayer;
+                levelManager.OnLevelEnd -= LockPlayerInput;
             }
         }
 
@@ -60,19 +61,19 @@ namespace GameCells.Player
         {
             if (levelManager != null)
             {
-                PlayerObject = PhotonNetwork.Instantiate(_playerControllerPrefab.name, levelManager.GetSpawnPoint(), Quaternion.identity);
+                PlayerController = PhotonNetwork.Instantiate(_playerControllerPrefab.name, levelManager.GetSpawnPoint(), Quaternion.identity);
             }
             else
             {
                 //TODO better spawn
-                PlayerObject = PhotonNetwork.Instantiate(_playerControllerPrefab.name, FindObjectOfType<NetworkDebugger>().SpawnPoint.position, Quaternion.identity);
+                PlayerController = PhotonNetwork.Instantiate(_playerControllerPrefab.name, FindObjectOfType<NetworkDebugger>().SpawnPoint.position, Quaternion.identity);
             }
 
             //Initialize Health
-            PlayerObject.GetComponent<PlayerHealth>().Initialize(this);
+            PlayerController.GetComponent<PlayerHealth>().Initialize(this);
 
             //Initialize Gun
-            PlayerObject.GetComponent<PlayerShooting>().EquipGun(levelManager.LevelData.StartWithGun);
+            PlayerController.GetComponent<PlayerShooting>().EquipGun(levelManager.LevelData.StartWithGun);
         }
 
         public void OnPlayerHealthChanged(float healthPercentage)
@@ -82,29 +83,48 @@ namespace GameCells.Player
 
         public void OnPlayerDeath()
         {
-            DestroyPlayer();
+            DestroyPlayerController();
+
+            if (levelManager.LevelData.CanRespawn)
+            {
+                StartCoroutine(PlayerRespawnCO());
+            }
+            else
+            {
+                EliminatePlayer();
+            }
         }
 
-        public void DestroyPlayer()
+        //Player loses this round and cannot respawn
+        public void EliminatePlayer()
         {
-            PhotonNetwork.Destroy(PlayerObject);
-            PlayerObject = null;
-            Destroy(this.gameObject);
+            OnPlayerEliminated?.Invoke();
         }
 
-        private void OnDestroy()
+        public void DestroyPlayerController()
         {
-            Debug.LogError($"{photonView.Owner.NickName} destroyed");
+            PhotonNetwork.Destroy(PlayerController);
+            PlayerController = null;
+        }
+
+        private IEnumerator PlayerRespawnCO()
+        {
+            yield return WaitHandler.GetWaitForSeconds(3);
+
+            if (levelManager.CurrentLevelState != ELevelState.Running)
+                yield break;
+
+            SpawnPlayerController();
         }
 
         public void LockPlayerInput()
         {
-            PlayerObject.GetComponent<PlayerInputHandler>().LockInput(true);
+            PlayerController.GetComponent<PlayerInputHandler>().LockInput(true);
         }
 
         public void UnlockPlayerInput()
         {
-            PlayerObject.GetComponent<PlayerInputHandler>().LockInput(false);
+            PlayerController.GetComponent<PlayerInputHandler>().LockInput(false);
         }
     }
 }

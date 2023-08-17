@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b9f4fa6b7f9d5a9428e7bc79ee306856, type: 3}
-  m_Name: Multiplayer Test Scene 3
+  m_Name: Playground
   m_EditorClassIdentifier: 
-  LevelName: Purple Zone
+  LevelName: Playground
   RoundDuration: 120
-  SceneName: Wong_Level
-  LevelDescription: Welcome to Free For All. Every player for themselves. First to
-    30 wins
+  SceneName: Xiang-LevelDesign
+  LevelDescription: team deathmatch-When either side reaches 30 kills before the
+    other, that side will achieve victory!!!
   HasTeam: 1
   CanRespawn: 1
   StartWithGun: 1
