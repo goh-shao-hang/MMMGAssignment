@@ -15,6 +15,9 @@ public class LevelManager : Singleton<LevelManager>
     [SerializeField] private SO_Level _levelData;
     public SO_Level LevelData => _levelData;
 
+    [Header("Player Manager")]
+    [SerializeField] private GameObject _playerManagerPrefab;
+
     [Header("Photon View")]
     [SerializeField] private PhotonView _photonView;
 
@@ -98,6 +101,9 @@ public class LevelManager : Singleton<LevelManager>
 
         StartCoroutine(CountdownTimerCO());
         Debug.LogWarning("Level countdown");
+
+        //Spawn Player
+        SpawnLocalPlayerManager();
     }
 
     private IEnumerator CountdownTimerCO()
@@ -166,6 +172,11 @@ public class LevelManager : Singleton<LevelManager>
     }
 
     //Game loop unrelated functions
+    private void SpawnLocalPlayerManager()
+    {
+        PhotonNetwork.Instantiate(_playerManagerPrefab.name, Vector3.zero, Quaternion.identity);
+    }
+
     public Vector3 GetSpawnPoint()
     {
         return _team1SpawnPoint.position + new Vector3(Random.Range(-_spawnRadius, _spawnRadius), 0f, Random.Range(-_spawnRadius, _spawnRadius));
