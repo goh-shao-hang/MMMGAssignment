@@ -26,7 +26,6 @@ namespace GameCells.Player
             if (photonView.IsMine)
             {
                 SpawnPlayerController();
-                Debug.LogError($"Spawned {photonView.Owner.NickName}");
             }
         }
 
@@ -39,7 +38,7 @@ namespace GameCells.Player
             {
                 levelManager.OnLevelCountdown += LockPlayerInput;
                 levelManager.OnLevelStart += UnlockPlayerInput;
-                levelManager.OnLevelEnd += DestroyPlayer;
+                levelManager.OnLevelEnd += LockPlayerInput;
             }
         }
 
@@ -52,7 +51,7 @@ namespace GameCells.Player
             {
                 levelManager.OnLevelCountdown -= LockPlayerInput;
                 levelManager.OnLevelStart -= UnlockPlayerInput;
-                levelManager.OnLevelEnd -= DestroyPlayer;
+                levelManager.OnLevelEnd -= LockPlayerInput;
             }
         }
 
@@ -90,11 +89,6 @@ namespace GameCells.Player
             PhotonNetwork.Destroy(PlayerObject);
             PlayerObject = null;
             Destroy(this.gameObject);
-        }
-
-        private void OnDestroy()
-        {
-            Debug.LogError($"{photonView.Owner.NickName} destroyed");
         }
 
         public void LockPlayerInput()

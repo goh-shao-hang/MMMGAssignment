@@ -97,13 +97,14 @@ public class LevelManager : Singleton<LevelManager>
     private void RPC_LevelCountdown()
     {
         _currentLevelState = ELevelState.Countdown;
-        OnLevelCountdown?.Invoke();
 
         StartCoroutine(CountdownTimerCO());
         Debug.LogWarning("Level countdown");
 
         //Spawn Player
         SpawnLocalPlayerManager();
+
+        OnLevelCountdown?.Invoke();
     }
 
     private IEnumerator CountdownTimerCO()
@@ -129,10 +130,11 @@ public class LevelManager : Singleton<LevelManager>
     private void RPC_LevelStart()
     {
         _currentLevelState = ELevelState.Running;
-        OnLevelCountdown?.Invoke();
 
         StartCoroutine(LevelTimerCO());
         Debug.LogWarning("Level start");
+
+        OnLevelStart?.Invoke();
     }
 
     private IEnumerator LevelTimerCO()
@@ -158,16 +160,21 @@ public class LevelManager : Singleton<LevelManager>
     private void RPC_LevelEnd()
     {
         _currentLevelState = ELevelState.Ended;
-        OnLevelEnd?.Invoke();
 
         _roundEndText.gameObject.SetActive(true);
         Debug.LogWarning("Level end");
+
+        OnLevelEnd?.Invoke();
     }
 
     //Runs on master client only
     private IEnumerator ServerLevelEndCO()
     {
-        yield return WaitHandler.GetWaitForSeconds(GameData.LEVEL_END_WAITING_TIME);
+        Time.timeScale = 0f;
+
+        yield return WaitHandler.GetWaitForSecondsRealtime(GameData.LEVEL_END_WAITING_TIME);
+
+        Time.timeScale = 1f;
         _gameManager.OnLevelEnd();
     }
 

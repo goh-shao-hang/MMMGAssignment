@@ -55,7 +55,7 @@ namespace GameCells.Player
         {
             _currentHealth -= damage;
 
-            _playerManager.OnPlayerHealthChanged((float)_currentHealth / (float)MAX_HEALTH);
+            _playerManager?.OnPlayerHealthChanged((float)_currentHealth / (float)MAX_HEALTH);
 
             if (_currentHealth <= 0)
             {
@@ -73,7 +73,7 @@ namespace GameCells.Player
         {
             _currentHealth = 0;
 
-            _playerManager.OnPlayerHealthChanged((float)_currentHealth / (float)MAX_HEALTH);
+            _playerManager?.OnPlayerHealthChanged((float)_currentHealth / (float)MAX_HEALTH);
 
             Die();
         }
@@ -81,7 +81,7 @@ namespace GameCells.Player
         public void Die()
         {
             _playerPhotonView.RPC(nameof(RPC_SpawnDeathParticles), RpcTarget.All);
-            _playerManager.OnPlayerDeath();
+            _playerManager?.OnPlayerDeath();
         }
 
         [PunRPC]
