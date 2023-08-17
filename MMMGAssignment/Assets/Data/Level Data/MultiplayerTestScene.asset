@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: MultiplayerTestScene
   m_EditorClassIdentifier: Assembly-CSharp::SO_Level
   LevelName: The Test Room Of Death
-  RoundDuration: 5
+  RoundDuration: 30
   SceneName: MultiplayerTestScene
   LevelDescription: Welcome to the test room.
   HasTeam: 1
-  CanRespawn: 1
+  CanRespawn: 0
   StartWithGun: 0
   EndWhenPlayersEliminated: 0
   PlayersEliminationCount: 0

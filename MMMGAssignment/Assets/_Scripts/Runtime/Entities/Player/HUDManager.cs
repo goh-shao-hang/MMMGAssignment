@@ -12,6 +12,7 @@ namespace GameCells.Player
         [SerializeField] private PlayerManager _playerManager;
         [SerializeField] private TMP_Text _usernameText;
         [SerializeField] private Image _healthImage;
+        [SerializeField] private TMP_Text _eliminatedText;
 
         private void Awake()
         {
@@ -19,16 +20,19 @@ namespace GameCells.Player
                 Destroy(this.gameObject);
 
             UpdateUsername(_playerManager.photonView.Owner.NickName);
+            _eliminatedText.gameObject.SetActive(false);
         }
 
         private void OnEnable()
         {
             _playerManager.OnHealthChanged += UpdateHealthUI;
+            _playerManager.OnPlayerEliminated += ShowEliminatedUI;
         }
 
         private void OnDisable()
         {
             _playerManager.OnHealthChanged -= UpdateHealthUI;
+            _playerManager.OnPlayerEliminated -= ShowEliminatedUI;
         }
 
         public void UpdateUsername(string username)
@@ -41,5 +45,9 @@ namespace GameCells.Player
             _healthImage.fillAmount = healthPercentage;
         }
 
+        public void ShowEliminatedUI()
+        {
+            _eliminatedText.gameObject.SetActive(true);
+        }
     }
 }
