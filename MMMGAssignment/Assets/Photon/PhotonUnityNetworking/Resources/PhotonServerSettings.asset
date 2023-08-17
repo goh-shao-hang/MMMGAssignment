@@ -54,6 +54,8 @@ MonoBehaviour:
   - RPC_LevelCountdown
   - RPC_LevelEnd
   - RPC_LevelStart
+  - ResumeTime
+  - StopTime
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1
