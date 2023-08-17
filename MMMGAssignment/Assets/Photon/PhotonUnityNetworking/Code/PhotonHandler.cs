@@ -138,6 +138,12 @@ namespace Photon.Pun
             base.OnDisable();
         }
 
+        private void Update()
+        {
+            //TODO temporary fix for RPCs not processing when timescale is 0
+            if (Time.timeScale == 0)
+                this.Dispatch();
+        }
 
         /// <summary>Called in intervals by UnityEngine. Affected by Time.timeScale.</summary>
         protected void FixedUpdate()
