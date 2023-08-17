@@ -168,15 +168,28 @@ public class LevelManager : Singleton<LevelManager>
         OnLevelEnd?.Invoke();
     }
 
-    //Runs on master client only
+    //Runs on master client
     private IEnumerator ServerLevelEndCO()
     {
-        Time.timeScale = 0f;
+        _photonView.RPC(nameof(StopTime), RpcTarget.All);
 
         yield return WaitHandler.GetWaitForSecondsRealtime(GameData.LEVEL_END_WAITING_TIME);
 
-        Time.timeScale = 1f;
+        _photonView.RPC(nameof(ResumeTime), RpcTarget.All);
+
         _gameManager.OnLevelEnd();
+    }
+
+    [PunRPC]
+    private void StopTime()
+    {
+        Time.timeScale = 0f;
+    }
+
+    [PunRPC]
+    private void ResumeTime()
+    {
+        Time.timeScale = 1f;
     }
 
     //Game loop unrelated functions
