@@ -82,7 +82,15 @@ namespace GameCells.Player
         public void Die()
         {
             _playerPhotonView.RPC(nameof(RPC_SpawnDeathParticles), RpcTarget.All);
-            _playerManager?.OnPlayerDeath();
+
+            if (_playerManager != null)
+            {
+                _playerManager?.OnPlayerDeath();
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
         }
 
         [PunRPC]

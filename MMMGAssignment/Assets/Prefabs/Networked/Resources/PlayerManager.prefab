@@ -756,6 +756,7 @@ MonoBehaviour:
   _healthImage: {fileID: 6785406339838083147}
   _eliminatedText: {fileID: 3848803545036368720}
   _respawningText: {fileID: 277658799}
+  _eliminatedTextDuration: 3
 --- !u!1 &8033509166085564939
 GameObject:
   m_ObjectHideFlags: 0

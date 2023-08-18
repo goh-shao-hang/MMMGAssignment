@@ -1,3 +1,4 @@
+using GameCells.Utilities;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -14,6 +15,9 @@ namespace GameCells.Player
         [SerializeField] private Image _healthImage;
         [SerializeField] private TMP_Text _eliminatedText;
         [SerializeField] private TMP_Text _respawningText;
+
+        [Header("Settings")]
+        [SerializeField] private float _eliminatedTextDuration = 3f;
 
         private void Awake()
         {
@@ -55,7 +59,20 @@ namespace GameCells.Player
 
         public void ShowEliminatedUI()
         {
+            StartCoroutine(ShowEliminatedUICO());
+        }
+
+        private IEnumerator ShowEliminatedUICO()
+        {
             _eliminatedText.gameObject.SetActive(true);
+
+            yield return WaitHandler.GetWaitForSeconds(1);
+
+            _eliminatedText.CrossFadeAlpha(0, _eliminatedTextDuration - 1, true);
+
+            yield return WaitHandler.GetWaitForSeconds(_eliminatedTextDuration - 1);
+
+            _eliminatedText.gameObject.SetActive(false);
         }
 
         public void ShowRespawningUI()
