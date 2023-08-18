@@ -17,7 +17,7 @@ MonoBehaviour:
   SceneName: MultiplayerTestScene
   LevelDescription: Welcome to the test room.
   HasTeam: 1
-  CanRespawn: 0
+  CanRespawn: 1
   StartWithGun: 0
   EndWhenPlayersEliminated: 0
   PlayersEliminationCount: 0

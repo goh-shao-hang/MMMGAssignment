@@ -17,11 +17,17 @@ namespace GameCells.Player
         //EVENTS
         public event Action<float> OnHealthChanged;
         public event Action OnPlayerEliminated;
+        public event Action OnPlayerRespawnStart;
+        public event Action<float> OnPlayerRespawnTimeUpdate;
+        public event Action OnPlayerRespawnEnd;
 
         private GameObject PlayerController = null;
 
         private LevelManager _levelManager;
         private LevelManager levelManager => _levelManager ??= LevelManager.GetInstance();
+
+
+        public float CurrentRespawningTime { get; private set; }
 
         private void Awake()
         {
@@ -109,12 +115,28 @@ namespace GameCells.Player
 
         private IEnumerator PlayerRespawnCO()
         {
-            yield return WaitHandler.GetWaitForSeconds(3);
+            CurrentRespawningTime = 0f;
+            OnPlayerRespawnStart?.Invoke();
 
-            if (levelManager.CurrentLevelState != ELevelState.Running)
-                yield break;
+            while (CurrentRespawningTime < GameData.RESPAWN_TIME)
+            {
+                CurrentRespawningTime += Time.deltaTime;
 
-            SpawnPlayerController();
+                OnPlayerRespawnTimeUpdate?.Invoke(CurrentRespawningTime);
+
+                if (levelManager.CurrentLevelState != ELevelState.Running) //If game isn't running anymore, exit coroutine
+                {
+                    OnPlayerRespawnEnd?.Invoke();
+                    yield break;
+                }
+
+                yield return null;
+            }
+
+            OnPlayerRespawnEnd?.Invoke();
+
+            if (levelManager.CurrentLevelState == ELevelState.Running)
+                SpawnPlayerController();
         }
 
         public void LockPlayerInput()
