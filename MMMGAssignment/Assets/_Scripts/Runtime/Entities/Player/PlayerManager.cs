@@ -141,11 +141,6 @@ namespace GameCells.Player
                 SpawnPlayerController();
         }
 
-        public void SetPlayerControllerNonLocal()
-        {
-
-        }
-
         public void LockPlayerInput()
         {
             PlayerController.GetComponent<PlayerInputHandler>().LockInput(true);
