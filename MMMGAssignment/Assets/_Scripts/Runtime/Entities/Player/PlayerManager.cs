@@ -76,7 +76,7 @@ namespace GameCells.Player
                 PlayerController = PhotonNetwork.Instantiate(_playerControllerPrefab.name, FindObjectOfType<NetworkDebugger>().SpawnPoint.position, Quaternion.identity);
             }
 
-            //Initialize Health
+            //InitializeHealth
             PlayerController.GetComponent<PlayerHealth>().Initialize(this);
 
             //Initialize Gun
@@ -139,6 +139,11 @@ namespace GameCells.Player
 
             if (levelManager.CurrentLevelState == ELevelState.Running)
                 SpawnPlayerController();
+        }
+
+        public void SetPlayerControllerNonLocal()
+        {
+
         }
 
         public void LockPlayerInput()

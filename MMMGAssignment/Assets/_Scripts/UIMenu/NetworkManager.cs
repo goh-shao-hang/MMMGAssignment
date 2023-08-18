@@ -5,6 +5,8 @@ using Photon.Pun;
 using UnityEngine.UI;
 using Photon.Realtime;
 using TMPro;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
+using GameCells;
 
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
@@ -37,6 +39,13 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public GameObject roomListEntryPrefab;
     public GameObject roomListParentGameobject;
 
+    [Header("Player Colors")]
+    [SerializeField] private SkinnedMeshRenderer _playerColorPreview;
+
+    private int _currentPlayerTextureIndex;
+
+    private PlayerColorRepository _playerColorRepository;
+    private PlayerColorRepository playerColorRepository => _playerColorRepository ??= PlayerColorRepository.GetInstance();
 
     private Dictionary<string, RoomInfo> cachedRoomList;
     private Dictionary<string, GameObject> roomListGameobjects;
@@ -47,6 +56,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     private void Awake()
     {
         PhotonNetwork.AutomaticallySyncScene = true;
+
+        SetPlayerColor(0);
     }
 
     // Start is called before the first frame update
@@ -134,6 +145,18 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         {
             StartGame();
         }
+    }
+
+    public void OnPreviousPlayerColorButtonPressed()
+    {
+        _currentPlayerTextureIndex = _currentPlayerTextureIndex - 1 >= 0 ? _currentPlayerTextureIndex - 1 : playerColorRepository.PlayerTextures.Length - 1;
+        SetPlayerColor(_currentPlayerTextureIndex);
+    }
+
+    public void OnNextPlayerColorButtonPressed()
+    {
+        _currentPlayerTextureIndex = _currentPlayerTextureIndex + 1 >= playerColorRepository.PlayerTextures.Length ? 0 : _currentPlayerTextureIndex + 1;
+        SetPlayerColor(_currentPlayerTextureIndex);
     }
 
     #endregion
@@ -354,6 +377,18 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
         PhotonNetwork.CurrentRoom.IsVisible = false; //As game starts, this room is no longer visible
         PhotonNetwork.CurrentRoom.IsOpen = false; //As game starts, this room is no longer joinable
+    }
+
+    private void SetPlayerColor(int textureIndex)
+    {
+        _playerColorPreview.material.mainTexture = playerColorRepository.GetTextureByIndex(textureIndex);
+        //TODO in game color
+        Hashtable playerColor = new Hashtable()
+        {
+            { GameData.PLAYER_COLOR_HASH, textureIndex }
+        };
+
+        PhotonNetwork.LocalPlayer.SetCustomProperties(playerColor);
     }
 
     #endregion

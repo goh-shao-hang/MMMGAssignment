@@ -56,6 +56,11 @@ MonoBehaviour:
   - RPC_LevelStart
   - ResumeTime
   - StopTime
+  - SetPlayerColor
+  - RPC_SetPlayerColor
+  - RPC_SetPlayerControllerReference
+  - RPC_SpawnPlayerController
+  - RPC_SetupPlayer
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

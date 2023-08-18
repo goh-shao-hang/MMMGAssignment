@@ -13,6 +13,12 @@ namespace GameCells
         public const float LEVEL_END_WAITING_TIME = 3f;
         public const float RESPAWN_TIME = 3f;
 
+        #region Hashes
+
+        public const string PLAYER_COLOR_HASH = "PlayerColor";
+
+        #endregion
+
         #region Animator Hashes
 
         public static readonly int IS_MOVING_HASH = Animator.StringToHash("isMoving");

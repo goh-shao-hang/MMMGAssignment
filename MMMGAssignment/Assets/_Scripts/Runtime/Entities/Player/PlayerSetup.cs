@@ -13,11 +13,10 @@ namespace GameCells.Player
         [SerializeField] private Camera _playerCamera;
         [SerializeField] private TMP_Text _usernameText;
 
-        [SerializeField] private Camera _billboardTargetCamera;
+        private Camera _billboardTargetCamera;
 
-        public void Awake()
+        public void Start()
         {
-
             //TODO
             _billboardTargetCamera = GameObject.FindAnyObjectByType<Camera>();
 
