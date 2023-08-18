@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Level_Playground
   m_EditorClassIdentifier: 
   LevelName: Playground
-  RoundDuration: 120
+  RoundDuration: 30
   SceneName: Xiang-LevelDesign
   LevelDescription: team deathmatch-When either side reaches 30 kills before the
     other, that side will achieve victory!!!

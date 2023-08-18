@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Level_CoastalSummerSplash
   m_EditorClassIdentifier: 
   LevelName: Coastal Summer Splash
-  RoundDuration: 180
+  RoundDuration: 30
   SceneName: CheeBing Level Design
   LevelDescription: 'Welcome to Coastal Summer Splash! Embark on an exciting and
     energetic water gun battle against the backdrop of the sun-kissed coastline and

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Level_TitlingTowers
   m_EditorClassIdentifier: 
   LevelName: Tilting Towers
-  RoundDuration: 60
+  RoundDuration: 30
   SceneName: Barath_Level
   LevelDescription: A level designed to test player's movement skills as they continue
     to survive through the tricky moving terrain and other enemy players trying to
