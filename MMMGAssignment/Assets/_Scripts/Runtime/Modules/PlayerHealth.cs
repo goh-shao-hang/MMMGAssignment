@@ -29,6 +29,7 @@ namespace GameCells.Player
         private void Start()
         {
             _currentHealth = MAX_HEALTH;
+            _playerManager?.OnPlayerHealthChanged(1);
         }
 
         private void Update()

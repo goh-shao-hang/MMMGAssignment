@@ -21,13 +21,14 @@ namespace GameCells.Player
         public event Action<float> OnPlayerRespawnTimeUpdate;
         public event Action OnPlayerRespawnEnd;
 
-        private GameObject PlayerController = null;
+        public GameObject PlayerController { get; private set; } = null;
 
         private LevelManager _levelManager;
         private LevelManager levelManager => _levelManager ??= LevelManager.GetInstance();
 
 
         public float CurrentRespawningTime { get; private set; }
+
 
         private void Awake()
         {
@@ -80,6 +81,7 @@ namespace GameCells.Player
 
             //Initialize Gun
             PlayerController.GetComponent<PlayerShooting>().EquipGun(levelManager.LevelData.StartWithGun);
+
         }
 
         public void OnPlayerHealthChanged(float healthPercentage)
