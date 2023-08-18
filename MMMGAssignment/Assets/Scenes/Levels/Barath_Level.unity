@@ -3012,6 +3012,7 @@ GameObject:
   - component: {fileID: 8471955723743430608}
   - component: {fileID: 8471955723743430607}
   - component: {fileID: 8471955723743430609}
+  - component: {fileID: 8471955723743430610}
   m_Layer: 7
   m_Name: Cylinder.001
   m_TagString: Untagged
@@ -5885,6 +5886,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c66c69a6127c1346b9a31e62c549fa8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  waitingTime: 6
+--- !u!114 &8471955723743430610
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3420694711235288012}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 998
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!23 &8483556975074876923
 MeshRenderer:
   m_ObjectHideFlags: 0
