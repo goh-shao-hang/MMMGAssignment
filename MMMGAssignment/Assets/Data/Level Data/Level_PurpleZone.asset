@@ -15,6 +15,7 @@ MonoBehaviour:
   LevelName: Purple Zone
   RoundDuration: 120
   SceneName: Wong_Level
+  LevelOverviewImage: {fileID: 21300000, guid: 8ea043bd466fa41418b5aea09be201f4, type: 3}
   LevelDescription: Welcome to Free For All. Every player for themselves. First to
     30 wins
   HasTeam: 1

@@ -923,7 +923,7 @@ PrefabInstance:
         type: 3}
       propertyPath: _team1SpawnPoint
       value: 
-      objectReference: {fileID: 4440472256484147959}
+      objectReference: {fileID: 1462496507}
     - target: {fileID: 595409081765342274, guid: 1a095c2a7a6824b4f9ec115e18fa6938,
         type: 3}
       propertyPath: m_Name
@@ -1118,6 +1118,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1462496506
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1462496507}
+  m_Layer: 0
+  m_Name: SpawnPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1462496507
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1462496506}
+  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071067}
+  m_LocalPosition: {x: -34.67291, y: 70.09166, z: -26.123484}
+  m_LocalScale: {x: 2913.6003, y: 2913.5999, z: 115.97588}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1649465772
 GameObject:
@@ -5921,7 +5952,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c66c69a6127c1346b9a31e62c549fa8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  waitingTime: 6
+  waitingTime: 15
 --- !u!114 &8471955723743430610
 MonoBehaviour:
   m_ObjectHideFlags: 0

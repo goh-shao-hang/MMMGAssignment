@@ -15,6 +15,7 @@ MonoBehaviour:
   LevelName: Playground
   RoundDuration: 30
   SceneName: Xiang-LevelDesign
+  LevelOverviewImage: {fileID: 21300000, guid: 798824eaa64508e43947fb5c448df49a, type: 3}
   LevelDescription: team deathmatch-When either side reaches 30 kills before the
     other, that side will achieve victory!!!
   HasTeam: 1

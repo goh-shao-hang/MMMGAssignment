@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class LevelManager : Singleton<LevelManager>
@@ -32,6 +33,10 @@ public class LevelManager : Singleton<LevelManager>
     [SerializeField] private BetterNetworkTimer _levelTimer;
 
     [Header("UI")]
+    [SerializeField] private CanvasGroup _levelIntroductionCanvas;
+    [SerializeField] private Image _levelOverviewImage;
+    [SerializeField] private TMP_Text _levelNameText;
+    [SerializeField] private TMP_Text _levelDescriptionText;
     [SerializeField] private TMP_Text _countdownTimerText; 
     [SerializeField] private TMP_Text _levelTimerText;
     [SerializeField] private TMP_Text _roundEndText;
@@ -56,6 +61,8 @@ public class LevelManager : Singleton<LevelManager>
         _levelTimerText.gameObject.SetActive(false);
 
         _roundEndText.gameObject.SetActive(false);
+
+        ShowLevelIntroduction();
 
         //Called on master client only
         if (!PhotonNetwork.IsMasterClient)
@@ -90,6 +97,13 @@ public class LevelManager : Singleton<LevelManager>
 
     public void ServerLevelCountdown()
     {
+        StartCoroutine(DelayedServerLevelCountdownCO());
+    }
+
+    private IEnumerator DelayedServerLevelCountdownCO()
+    {
+        yield return WaitHandler.GetWaitForSeconds(GameData.LEVEL_INTRODUCTION_TIME);
+
         _countdownTimer.StartTimerAsServer(GameData.LEVEL_COUNTDOWN_TIME);
         _photonView.RPC(nameof(RPC_LevelCountdown), RpcTarget.All);
     }
@@ -98,6 +112,8 @@ public class LevelManager : Singleton<LevelManager>
     private void RPC_LevelCountdown()
     {
         CurrentLevelState = ELevelState.Countdown;
+
+        FadeLevelIntroduction();
 
         StartCoroutine(CountdownTimerCO());
         Debug.LogWarning("Level countdown");
@@ -203,4 +219,31 @@ public class LevelManager : Singleton<LevelManager>
         return _team1SpawnPoint.position + new Vector3(Random.Range(-_spawnRadius, _spawnRadius), 0f, Random.Range(-_spawnRadius, _spawnRadius));
     }
 
+    private void ShowLevelIntroduction()
+    {
+        _levelIntroductionCanvas.gameObject.SetActive(true);
+        _levelIntroductionCanvas.alpha = 1;
+
+        _levelOverviewImage.overrideSprite = LevelData.LevelOverviewImage;
+        _levelNameText.text = LevelData.LevelName;
+        _levelDescriptionText.text = LevelData.LevelDescription;
+    }
+
+    private void FadeLevelIntroduction()
+    {
+        StartCoroutine(FadeLevelIntroductionCO());
+    }
+
+    private IEnumerator FadeLevelIntroductionCO()
+    { 
+        float timeElapsed = 0f;
+        while (timeElapsed < GameData.LEVEL_INTRODUCTION_FADE_TIME)
+        {
+            timeElapsed += Time.deltaTime;
+            _levelIntroductionCanvas.alpha = Mathf.Lerp(1, 0, timeElapsed / GameData.LEVEL_INTRODUCTION_FADE_TIME);
+            yield return null;
+        }
+
+        _levelIntroductionCanvas.gameObject.SetActive(false);
+    }
 }

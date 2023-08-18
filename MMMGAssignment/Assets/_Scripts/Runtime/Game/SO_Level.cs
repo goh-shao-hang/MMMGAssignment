@@ -9,6 +9,7 @@ public class SO_Level : ScriptableObject
     public string LevelName;
     public float RoundDuration;
     public string SceneName;
+    public Sprite LevelOverviewImage;
     [TextArea]
     public string LevelDescription;
 

@@ -15,6 +15,7 @@ MonoBehaviour:
   LevelName: Water Tunnel Racing
   RoundDuration: 240
   SceneName: Water Tunnel Racing
+  LevelOverviewImage: {fileID: 21300000, guid: 46940ab9d0c481447adf3b69ac32ca4a, type: 3}
   LevelDescription: Let's run! Enjoy running fast in the water tunnel! The first
     to reach the finish line will win!
   HasTeam: 0

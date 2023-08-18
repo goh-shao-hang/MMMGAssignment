@@ -12,6 +12,8 @@ namespace GameCells
         public const float LEVEL_COUNTDOWN_TIME = 3f;
         public const float LEVEL_END_WAITING_TIME = 3f;
         public const float RESPAWN_TIME = 3f;
+        public const float LEVEL_INTRODUCTION_TIME = 8f;
+        public const float LEVEL_INTRODUCTION_FADE_TIME = 1f;
 
         #region Hashes
 
