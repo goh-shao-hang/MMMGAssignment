@@ -55,9 +55,18 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     private void Awake()
     {
+        PhotonNetwork.EnableCloseConnection = true;
         PhotonNetwork.AutomaticallySyncScene = true;
 
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
         SetPlayerColor(0);
+
+        if (PhotonNetwork.IsConnected)
+            PhotonNetwork.Disconnect();
+
+        PhotonNetwork.ConnectUsingSettings();
     }
 
     // Start is called before the first frame update
@@ -81,12 +90,15 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     #region UI Callbacks
     public void OnLoginButtonClicked()
     {
+        if (!PhotonNetwork.IsConnected)
+            return;
+
         string playerName = playerNameInput.text;
         if (!string.IsNullOrEmpty(playerName))
         {
             PhotonNetwork.LocalPlayer.NickName = playerName;
-            PhotonNetwork.ConnectUsingSettings();
             playerNameText.text = playerName;
+            ActivatePanel(GameOptions_UI_Panel.name);
         }
         else
         {
@@ -170,8 +182,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public override void OnConnectedToMaster()
     {
         Debug.Log(PhotonNetwork.LocalPlayer.NickName + " is connected to Photon");
-        ActivatePanel(GameOptions_UI_Panel.name);
-
     }
 
     public override void OnCreatedRoom()
@@ -332,6 +342,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public override void OnLeftRoom()
     {
         ActivatePanel(GameOptions_UI_Panel.name);
+
+        if (playerListGameobjects == null)
+            return;
 
         foreach (GameObject playerListGameobject in playerListGameobjects.Values)
         {

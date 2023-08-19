@@ -78,5 +78,21 @@ public class GameManager : Singleton<GameManager>
     public void EndGame()
     {
         Debug.LogError("Game ended");
+        StartCoroutine(ReturnToMainMenuCO());
+    }
+
+    private IEnumerator ReturnToMainMenuCO()
+    {
+        Debug.LogWarning($"Loading main menu");
+        PhotonNetwork.LoadLevel("Main Menu");
+
+        while (PhotonNetwork.LevelLoadingProgress < 1)
+        {
+            //TODO Loading Screen Implementation
+
+            Debug.Log($"Loading Scene: {PhotonNetwork.LevelLoadingProgress}");
+            yield return null;
+        }
+
     }
 }
