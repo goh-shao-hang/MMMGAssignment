@@ -69,7 +69,7 @@ namespace GameCells.Player
         {
             if (levelManager != null)
             {
-                PlayerController = PhotonNetwork.Instantiate(_playerControllerPrefab.name, levelManager.GetSpawnPoint(), Quaternion.identity);
+                PlayerController = PhotonNetwork.Instantiate(_playerControllerPrefab.name, levelManager.GetTeam1SpawnPoint(), Quaternion.identity);
             }
             else
             {
@@ -88,6 +88,13 @@ namespace GameCells.Player
             {
                 TeamNumber = (int)(PhotonNetwork.LocalPlayer.CustomProperties[GameData.TEAM_INFO_HASH]);
                 PlayerController.GetComponentInChildren<PlayerColorManager>().OverrideColor(TeamNumber);
+                Debug.Log(TeamNumber);
+
+                //Move to spawn point
+                if (TeamNumber == 2)
+                {
+                    PlayerController.transform.position = levelManager.GetTeam2SpawnPoint();
+                }
             }
         }
 

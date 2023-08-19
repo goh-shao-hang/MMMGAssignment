@@ -223,9 +223,14 @@ public class LevelManager : SingletonPunCallbacks<LevelManager>
         PhotonNetwork.Instantiate(_playerManagerPrefab.name, Vector3.zero, Quaternion.identity);
     }
 
-    public Vector3 GetSpawnPoint()
+    public Vector3 GetTeam1SpawnPoint()
     {
         return _team1SpawnPoint.position + new Vector3(Random.Range(-_spawnRadius, _spawnRadius), 0f, Random.Range(-_spawnRadius, _spawnRadius));
+    }
+
+    public Vector3 GetTeam2SpawnPoint()
+    {
+        return _team2SpawnPoint.position + new Vector3(Random.Range(-_spawnRadius, _spawnRadius), 0f, Random.Range(-_spawnRadius, _spawnRadius));
     }
 
     private void ShowLevelIntroduction()
@@ -290,29 +295,6 @@ public class LevelManager : SingletonPunCallbacks<LevelManager>
             randomPlayer.SetCustomProperties(teamInfo);
             playerList.RemoveAt(index);
         }
-
-        /*Hashtable teamInfo = new Hashtable()
-        {
-            { GameData.TEAM_INFO_HASH, _teamInfoDict}
-        };*/
-
-        
-        //PhotonNetwork.CurrentRoom.SetCustomProperties(teamInfo);
     }
-
-    /*public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
-    {
-        base.OnRoomPropertiesUpdate(propertiesThatChanged);
-
-        if (propertiesThatChanged.ContainsKey(GameData.TEAM_INFO_HASH))
-        {
-            _teamInfoDict = propertiesThatChanged[GameData.TEAM_INFO_HASH] as Dictionary<Player, int>;
-
-            foreach (var item in _teamInfoDict)
-            {
-                Debug.Log(item.Key.ToString() + item.Value.ToString());
-            }
-        }
-    }*/
 
 }
