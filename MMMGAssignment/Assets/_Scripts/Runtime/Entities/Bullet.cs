@@ -14,6 +14,7 @@ public class Bullet : MonoBehaviourPun
     [SerializeField] private LayerMask _obstacleLayers;
     [SerializeField] private ParticleSystem _trailParticles;
     [SerializeField] private ParticleSystem _hitParticlesPrefab;
+    [SerializeField] private AudioClip _collisionSfx;
 
     [Header("Settings")]
     [SerializeField] private int _bulletDamage = 20;
@@ -96,6 +97,11 @@ public class Bullet : MonoBehaviourPun
         {
             GameObject hitParticles = Instantiate(_hitParticlesPrefab, spawnPosition, Quaternion.identity).gameObject;
             Destroy(hitParticles, 1.5f);
+        }
+
+        if (_collisionSfx != null)
+        {
+            AudioSource.PlayClipAtPoint(_collisionSfx, transform.position);
         }
     }
 }

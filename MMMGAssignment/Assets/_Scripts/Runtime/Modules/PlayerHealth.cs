@@ -11,8 +11,7 @@ namespace GameCells.Player
         [SerializeField] private PhotonView _playerPhotonView;
         [SerializeField] private GameObject _deathParticles;
 
-        //TODO
-        //public event Action<float> OnHealthChanged;
+        public event Action OnTakeDamage;
 
         public PhotonView PlayerPhotonView => _playerPhotonView;
         public PlayerManager PlayerManager { get; private set; }
@@ -51,6 +50,7 @@ namespace GameCells.Player
 
         public void TakeDamage(int damage)
         {
+            OnTakeDamage?.Invoke();
             _playerPhotonView.RPC(nameof(RPC_TakeDamage), _playerPhotonView.Owner, damage);
         }
 

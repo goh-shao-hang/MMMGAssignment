@@ -64,6 +64,11 @@ MonoBehaviour:
   - RPC_DestroySelf
   - RPC_OverrideColor
   - RPC_OnTeammateKilled
+  - RPC_PlayJumpSfx
+  - RPC_PlayMovingSfx
+  - RPC_StopMovingSfx
+  - RPC_PlayHitSfx
+  - RPC_PlayShootSfx
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1
