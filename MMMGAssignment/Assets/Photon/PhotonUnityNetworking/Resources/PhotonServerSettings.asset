@@ -63,6 +63,7 @@ MonoBehaviour:
   - RPC_SetupPlayer
   - RPC_DestroySelf
   - RPC_OverrideColor
+  - RPC_OnTeammateKilled
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

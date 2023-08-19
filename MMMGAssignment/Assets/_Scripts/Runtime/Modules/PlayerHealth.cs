@@ -15,7 +15,7 @@ namespace GameCells.Player
         //public event Action<float> OnHealthChanged;
 
         public PhotonView PlayerPhotonView => _playerPhotonView;
-        private PlayerManager _playerManager;
+        public PlayerManager PlayerManager { get; private set; }
 
         private LevelManager _levelManager;
         private LevelManager levelManager => _levelManager ??= LevelManager.GetInstance();
@@ -25,14 +25,14 @@ namespace GameCells.Player
 
         public PlayerHealth Initialize(PlayerManager playerManager)
         {
-            this._playerManager = playerManager;
+            this.PlayerManager = playerManager;
             return this;
         }
 
         private void Start()
         {
             _currentHealth = MAX_HEALTH;
-            _playerManager?.OnPlayerHealthChanged(1);
+            PlayerManager?.OnPlayerHealthChanged(1);
         }
 
         private void Update()
@@ -85,7 +85,7 @@ namespace GameCells.Player
         {
             _currentHealth -= damage;
 
-            _playerManager?.OnPlayerHealthChanged((float)_currentHealth / (float)MAX_HEALTH);
+            PlayerManager?.OnPlayerHealthChanged((float)_currentHealth / (float)MAX_HEALTH);
 
             if (_currentHealth <= 0)
             {
@@ -103,7 +103,7 @@ namespace GameCells.Player
         {
             _currentHealth = 0;
 
-            _playerManager?.OnPlayerHealthChanged((float)_currentHealth / (float)MAX_HEALTH);
+            PlayerManager?.OnPlayerHealthChanged((float)_currentHealth / (float)MAX_HEALTH);
 
             Die();
         }
@@ -112,9 +112,9 @@ namespace GameCells.Player
         {
             _playerPhotonView.RPC(nameof(RPC_SpawnDeathParticles), RpcTarget.All);
 
-            if (_playerManager != null)
+            if (PlayerManager != null)
             {
-                _playerManager?.OnPlayerDeath();
+                PlayerManager?.OnPlayerDeath();
             }
             else
             {

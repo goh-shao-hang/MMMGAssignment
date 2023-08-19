@@ -17,6 +17,7 @@ namespace GameCells.Player
         //EVENTS
         public event Action<float> OnHealthChanged;
         public event Action OnPlayerEliminated;
+        public event Action OnPlayerWon;
         public event Action OnPlayerRespawnStart;
         public event Action<float> OnPlayerRespawnTimeUpdate;
         public event Action OnPlayerRespawnEnd;
@@ -127,6 +128,13 @@ namespace GameCells.Player
         public void EliminatePlayer()
         {
             OnPlayerEliminated?.Invoke();
+        }
+
+        //Player wins and gets removed to wait for next round
+        public void PlayerWinRound()
+        {
+            DestroyPlayerController();
+            OnPlayerWon?.Invoke();
         }
 
         public void DestroyPlayerController()

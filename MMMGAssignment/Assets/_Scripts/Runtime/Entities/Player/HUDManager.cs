@@ -14,10 +14,11 @@ namespace GameCells.Player
         [SerializeField] private TMP_Text _usernameText;
         [SerializeField] private Image _healthImage;
         [SerializeField] private TMP_Text _eliminatedText;
+        [SerializeField] private TMP_Text _wonText;
         [SerializeField] private TMP_Text _respawningText;
 
         [Header("Settings")]
-        [SerializeField] private float _eliminatedTextDuration = 3f;
+        [SerializeField] private float textDuration = 3f;
 
         private void Awake()
         {
@@ -26,6 +27,7 @@ namespace GameCells.Player
 
             UpdateUsername(_playerManager.photonView.Owner.NickName);
             _eliminatedText.gameObject.SetActive(false);
+            _wonText.gameObject.SetActive(false);
             _respawningText.gameObject.SetActive(false);
         }
 
@@ -33,6 +35,7 @@ namespace GameCells.Player
         {
             _playerManager.OnHealthChanged += UpdateHealthUI;
             _playerManager.OnPlayerEliminated += ShowEliminatedUI;
+            _playerManager.OnPlayerWon += ShowWonUI;
             _playerManager.OnPlayerRespawnStart += ShowRespawningUI;
             _playerManager.OnPlayerRespawnTimeUpdate += UpdateRespawningUI;
             _playerManager.OnPlayerRespawnEnd += HideRespawningUI;
@@ -42,6 +45,7 @@ namespace GameCells.Player
         {
             _playerManager.OnHealthChanged -= UpdateHealthUI;
             _playerManager.OnPlayerEliminated -= ShowEliminatedUI;
+            _playerManager.OnPlayerWon -= ShowWonUI;
             _playerManager.OnPlayerRespawnStart -= ShowRespawningUI;
             _playerManager.OnPlayerRespawnTimeUpdate -= UpdateRespawningUI;
             _playerManager.OnPlayerRespawnEnd -= HideRespawningUI;
@@ -68,11 +72,29 @@ namespace GameCells.Player
 
             yield return WaitHandler.GetWaitForSeconds(1);
 
-            _eliminatedText.CrossFadeAlpha(0, _eliminatedTextDuration - 1, true);
+            _eliminatedText.CrossFadeAlpha(0, textDuration - 1, true);
 
-            yield return WaitHandler.GetWaitForSeconds(_eliminatedTextDuration - 1);
+            yield return WaitHandler.GetWaitForSeconds(textDuration - 1);
 
             _eliminatedText.gameObject.SetActive(false);
+        }
+
+        public void ShowWonUI()
+        {
+            StartCoroutine(ShowWonUICO());
+        }
+
+        private IEnumerator ShowWonUICO()
+        {
+            _wonText.gameObject.SetActive(true);
+
+            yield return WaitHandler.GetWaitForSeconds(1);
+
+            _wonText.CrossFadeAlpha(0, textDuration - 1, true);
+
+            yield return WaitHandler.GetWaitForSeconds(textDuration - 1);
+
+            _wonText.gameObject.SetActive(false);
         }
 
         public void ShowRespawningUI()

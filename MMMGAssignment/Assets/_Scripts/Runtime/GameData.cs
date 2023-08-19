@@ -14,7 +14,7 @@ namespace GameCells
         public const float RESPAWN_TIME = 3f;
 
         //TODO
-        public const float LEVEL_INTRODUCTION_TIME = 1f;
+        public const float LEVEL_INTRODUCTION_TIME = 10f;
         public const float LEVEL_INTRODUCTION_FADE_TIME = 1f;
 
         #region Hashes
