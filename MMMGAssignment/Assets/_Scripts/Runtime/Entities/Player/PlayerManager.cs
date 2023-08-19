@@ -29,6 +29,7 @@ namespace GameCells.Player
 
         public float CurrentRespawningTime { get; private set; }
 
+        public int TeamNumber { get; private set; }
 
         private void Awake()
         {
@@ -82,6 +83,12 @@ namespace GameCells.Player
             //Initialize Gun
             PlayerController.GetComponent<PlayerShooting>().EquipGun(levelManager.LevelData.StartWithGun);
 
+            //Initialize Team
+            if (levelManager.LevelData.HasTeam)
+            {
+                TeamNumber = (int)(PhotonNetwork.LocalPlayer.CustomProperties[GameData.TEAM_INFO_HASH]);
+                PlayerController.GetComponentInChildren<PlayerColorManager>().OverrideColor(TeamNumber);
+            }
         }
 
         public void OnPlayerHealthChanged(float healthPercentage)

@@ -2,15 +2,18 @@ using GameCells;
 using GameCells.PhotonNetworking;
 using GameCells.Utilities;
 using Photon.Pun;
+using Photon.Realtime;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
-public class LevelManager : Singleton<LevelManager>
+public class LevelManager : SingletonPunCallbacks<LevelManager>
 {
     [Header("Level Data (Required)")]
     [SerializeField] private SO_Level _levelData;
@@ -45,6 +48,8 @@ public class LevelManager : Singleton<LevelManager>
 
     public ELevelState CurrentLevelState { get; private set; }
 
+    private Dictionary<Player, int> _teamInfoDict = new Dictionary<Player, int>(); //int specifies team number. If it is 0, there is no team
+
     //EVENTS
     public event Action OnLevelPreparing;
     public event Action OnLevelCountdown;
@@ -69,9 +74,13 @@ public class LevelManager : Singleton<LevelManager>
             return;
 
         _gameManager = GameManager.GetInstance();
+
+        //Assign Teams
+        if (LevelData.HasTeam)
+            AssignTeams();
     }
 
-    private void OnEnable()
+    public override sealed void OnEnable()
     {
         if (!PhotonNetwork.IsMasterClient)
             return;
@@ -83,7 +92,7 @@ public class LevelManager : Singleton<LevelManager>
         _levelTimer.OnTimerExpired += ServerLevelEnd;
     }
 
-    private void OnDisable()
+    public override sealed void OnDisable()
     {
         if (!PhotonNetwork.IsMasterClient)
             return;
@@ -246,4 +255,64 @@ public class LevelManager : Singleton<LevelManager>
 
         _levelIntroductionCanvas.gameObject.SetActive(false);
     }
+
+
+
+    private void AssignTeams()
+    {
+        List<Player> playerList = PhotonNetwork.PlayerList.ToList();
+
+        int team1Count = 0;
+        int team2Count = 0;
+
+        while (playerList.Count > 0)
+        {
+            int index = Random.Range(0, playerList.Count);
+            int teamNumber = 0;
+            Player randomPlayer = playerList[index];
+
+            if (team1Count < team2Count || team1Count == team2Count && Random.value < 0.5f)
+            {
+                team1Count++;
+                teamNumber = 1;
+            }
+            else
+            {
+                team2Count++;
+                teamNumber = 2;
+            }
+
+            Hashtable teamInfo = new Hashtable()
+            {
+                { GameData.TEAM_INFO_HASH, teamNumber }
+            };
+
+            randomPlayer.SetCustomProperties(teamInfo);
+            playerList.RemoveAt(index);
+        }
+
+        /*Hashtable teamInfo = new Hashtable()
+        {
+            { GameData.TEAM_INFO_HASH, _teamInfoDict}
+        };*/
+
+        
+        //PhotonNetwork.CurrentRoom.SetCustomProperties(teamInfo);
+    }
+
+    /*public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
+    {
+        base.OnRoomPropertiesUpdate(propertiesThatChanged);
+
+        if (propertiesThatChanged.ContainsKey(GameData.TEAM_INFO_HASH))
+        {
+            _teamInfoDict = propertiesThatChanged[GameData.TEAM_INFO_HASH] as Dictionary<Player, int>;
+
+            foreach (var item in _teamInfoDict)
+            {
+                Debug.Log(item.Key.ToString() + item.Value.ToString());
+            }
+        }
+    }*/
+
 }

@@ -17,6 +17,9 @@ namespace GameCells.Player
         public PhotonView PlayerPhotonView => _playerPhotonView;
         private PlayerManager _playerManager;
 
+        private LevelManager _levelManager;
+        private LevelManager levelManager => _levelManager ??= LevelManager.GetInstance();
+
         public const int MAX_HEALTH = 100;
         private int _currentHealth;
 
@@ -49,6 +52,32 @@ namespace GameCells.Player
         public void TakeDamage(int damage)
         {
             _playerPhotonView.RPC(nameof(RPC_TakeDamage), _playerPhotonView.Owner, damage);
+        }
+
+        public void TakeDamage(int damage, Photon.Realtime.Player damager)
+        {
+            if (levelManager == null) //Probably offline, only consider the damage
+            {
+                TakeDamage(damage);
+            }
+            else
+            {
+                if (!levelManager.LevelData.HasTeam) //No team, just damage
+                {
+                    TakeDamage(damage);
+                }
+                else
+                {
+                    //Team is same, return
+                    if ((int)damager.CustomProperties[GameData.TEAM_INFO_HASH] == (int)_playerPhotonView.Owner.CustomProperties[GameData.TEAM_INFO_HASH])
+                    {
+                        Debug.LogError("Bullet collided but this is ur fren");
+                        return;
+                    }
+
+                    TakeDamage(damage);
+                }
+            }
         }
 
         [PunRPC]

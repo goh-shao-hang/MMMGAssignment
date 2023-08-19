@@ -55,7 +55,7 @@ public class Bullet : MonoBehaviourPun
                 if (playerHealth.PlayerPhotonView.Owner == _owner)
                     return;
 
-                other.GetComponent<PlayerHealth>()?.TakeDamage(_bulletDamage);
+                other.GetComponent<PlayerHealth>()?.TakeDamage(_bulletDamage, _owner);
                 DestroyBullet();
             }
         }
