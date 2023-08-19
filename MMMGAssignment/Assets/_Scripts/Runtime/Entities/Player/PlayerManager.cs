@@ -107,6 +107,12 @@ namespace GameCells.Player
         {
             DestroyPlayerController();
 
+            if (levelManager.LevelData.HasTeam)
+            {
+                //Team number has been set when spawning
+                levelManager.OnTeammateKilled(this.TeamNumber);
+            }
+
             if (levelManager.LevelData.CanRespawn)
             {
                 StartCoroutine(PlayerRespawnCO());

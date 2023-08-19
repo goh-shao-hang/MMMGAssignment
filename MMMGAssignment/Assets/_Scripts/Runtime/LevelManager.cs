@@ -43,12 +43,16 @@ public class LevelManager : SingletonPunCallbacks<LevelManager>
     [SerializeField] private TMP_Text _countdownTimerText; 
     [SerializeField] private TMP_Text _levelTimerText;
     [SerializeField] private TMP_Text _roundEndText;
+    [SerializeField] private GameObject _teamScoreUI;
+    [SerializeField] private TMP_Text _blueTeamKillsText;
+    [SerializeField] private TMP_Text _redTeamKillsText;
 
     private GameManager _gameManager;
 
     public ELevelState CurrentLevelState { get; private set; }
 
-    private Dictionary<Player, int> _teamInfoDict = new Dictionary<Player, int>(); //int specifies team number. If it is 0, there is no team
+    private int _team1Kills = 0;
+    private int _team2Kills = 0;
 
     //EVENTS
     public event Action OnLevelPreparing;
@@ -69,6 +73,15 @@ public class LevelManager : SingletonPunCallbacks<LevelManager>
 
         ShowLevelIntroduction();
 
+        if (LevelData.HasTeam)
+        {
+            _teamScoreUI.SetActive(true);
+        }
+        else
+        {
+            _teamScoreUI.SetActive(false);
+        }
+
         //Called on master client only
         if (!PhotonNetwork.IsMasterClient)
             return;
@@ -77,7 +90,9 @@ public class LevelManager : SingletonPunCallbacks<LevelManager>
 
         //Assign Teams
         if (LevelData.HasTeam)
+        {
             AssignTeams();
+        }
     }
 
     public override sealed void OnEnable()
@@ -231,6 +246,26 @@ public class LevelManager : SingletonPunCallbacks<LevelManager>
     public Vector3 GetTeam2SpawnPoint()
     {
         return _team2SpawnPoint.position + new Vector3(Random.Range(-_spawnRadius, _spawnRadius), 0f, Random.Range(-_spawnRadius, _spawnRadius));
+    }
+
+    public void OnTeammateKilled(int killedTeamNumber)
+    {
+        photonView.RPC(nameof(RPC_OnTeammateKilled), RpcTarget.All, killedTeamNumber);
+    }
+
+    [PunRPC]
+    private void RPC_OnTeammateKilled(int killedTeamNumber)
+    {
+        if (killedTeamNumber == 1)
+        {
+            _team2Kills++;
+            _redTeamKillsText.text = _team2Kills.ToString();
+        }
+        else if (killedTeamNumber == 2)
+        {
+            _team1Kills++;
+            _blueTeamKillsText.text = _team1Kills.ToString();
+        }
     }
 
     private void ShowLevelIntroduction()
