@@ -1,6 +1,7 @@
 using Cinemachine;
 using GameCells.Utilities;
 using Photon.Pun;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -35,6 +36,8 @@ namespace GameCells.Player
         private RaycastHit _hit;
         private Coroutine _startAimingCO;
 
+        public event Action OnShoot;
+
         private void Start()
         {
             if (_crossHairCanvas != null)
@@ -42,8 +45,8 @@ namespace GameCells.Player
             
             _playerAimingCamera.m_Follow = _playerThirdPersonCamera.CameraFollowTarget;
 
-            //TODO GUN VERY IMPORTANT BLABLA
-            EquipGun(true);
+            //TODO EQUPPING FOR DEBUG
+            //EquipGun(true);
 
             if (_aimingArmRig != null)
             {
@@ -188,6 +191,7 @@ namespace GameCells.Player
         {
             Bullet bullet = PhotonNetwork.Instantiate(_bulletPrefab.name, _fireTransform.position, Quaternion.LookRotation(_bulletTarget - _fireTransform.position)).GetComponent<Bullet>();
             bullet.SetOwner(photonView.Owner);
+            OnShoot?.Invoke();
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using GameCells.Utilities;
 using Photon.Realtime;
+using GameCells.Player;
 
 public class Bullet : MonoBehaviourPun
 {
@@ -13,6 +14,7 @@ public class Bullet : MonoBehaviourPun
     [SerializeField] private LayerMask _obstacleLayers;
     [SerializeField] private ParticleSystem _trailParticles;
     [SerializeField] private ParticleSystem _hitParticlesPrefab;
+    [SerializeField] private AudioClip _collisionSfx;
 
     [Header("Settings")]
     [SerializeField] private int _bulletDamage = 20;
@@ -54,7 +56,7 @@ public class Bullet : MonoBehaviourPun
                 if (playerHealth.PlayerPhotonView.Owner == _owner)
                     return;
 
-                other.GetComponent<PlayerHealth>()?.TakeDamage(_bulletDamage);
+                other.GetComponent<PlayerHealth>()?.TakeDamage(_bulletDamage, _owner);
                 DestroyBullet();
             }
         }
@@ -95,6 +97,11 @@ public class Bullet : MonoBehaviourPun
         {
             GameObject hitParticles = Instantiate(_hitParticlesPrefab, spawnPosition, Quaternion.identity).gameObject;
             Destroy(hitParticles, 1.5f);
+        }
+
+        if (_collisionSfx != null)
+        {
+            AudioSource.PlayClipAtPoint(_collisionSfx, transform.position);
         }
     }
 }

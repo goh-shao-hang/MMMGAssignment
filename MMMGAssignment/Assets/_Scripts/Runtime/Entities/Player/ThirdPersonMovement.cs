@@ -1,5 +1,6 @@
 using GameCells.Modules;
 using Photon.Pun;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -39,6 +40,11 @@ namespace GameCells.Player
         private bool _isGroundedLastFrame;
         private bool _isOnSlope => Vector3.Angle(Vector3.up, _slopeCheck.HitInfo().normal) > 5f;
         private bool _isAiming;
+
+        //EVENTS
+        public event Action OnStartMoving;
+        public event Action OnStopMoving;
+        public event Action OnJump;
 
         private bool IsGrounded()
         {
@@ -104,20 +110,30 @@ namespace GameCells.Player
 
             LimitMaxSpeed();
 
-            UpdateMoveAnimations();
+            UpdateMoveAnimationsAndAudio();
         }
 
-        private void UpdateMoveAnimations()
+        private void UpdateMoveAnimationsAndAudio()
         {
             if (_playerAnimator != null)
             {
                 if (_playerRigidbody.velocity.sqrMagnitude > 0.1f)
                 {
                     _playerAnimator.SetBool(GameData.IS_MOVING_HASH, true);
+
+                    if (IsGrounded())
+                    {
+                        OnStartMoving?.Invoke();
+                    }
+                    else
+                    {
+                        OnStopMoving?.Invoke();
+                    }
                 }
                 else
                 {
                     _playerAnimator.SetBool(GameData.IS_MOVING_HASH, false);
+                    OnStopMoving?.Invoke();
                 }
             }
         }
@@ -203,6 +219,7 @@ namespace GameCells.Player
                 _playerAnimator.SetTrigger(GameData.JUMP_HASH);
 
                 SpawnJumpParticles();
+                OnJump?.Invoke();
             }
         }
 

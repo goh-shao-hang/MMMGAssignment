@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9f4fa6b7f9d5a9428e7bc79ee306856, type: 3}
+  m_Name: Level_RingRumble
+  m_EditorClassIdentifier: Assembly-CSharp::SO_Level
+  LevelName: Ring Rumble
+  RoundDuration: 180
+  SceneName: Goh_LevelScene
+  LevelOverviewImage: {fileID: 21300000, guid: 75df0ba745762be48894f9cae13ae221, type: 3}
+  LevelDescription: Fight as a team and get as many kills as possible!
+  HasTeam: 1
+  CanRespawn: 1
+  StartWithGun: 1
+  EndWhenPlayersEliminated: 0
+  PlayersEliminationCount: 0

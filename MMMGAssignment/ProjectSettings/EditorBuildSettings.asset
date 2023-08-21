@@ -6,6 +6,24 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/MultiplayerTestScene.unity
-    guid: e3d1e9b1ac763d34f8b13e615f255773
+    path: Assets/Scenes/Main Menu.unity
+    guid: badcf777fe6d03a4eb8205b45a91ead2
+  - enabled: 1
+    path: Assets/Scenes/Levels/Barath_Level.unity
+    guid: 9fc0d4010bbf28b4594072e72b8655ab
+  - enabled: 1
+    path: Assets/Scenes/Levels/CheeBing Level Design.unity
+    guid: 84d4729cffa02b043aba324ee3684171
+  - enabled: 1
+    path: Assets/Scenes/Levels/Wong_Level.unity
+    guid: c4bb86f4f18ed324ba38c20d4bea4712
+  - enabled: 1
+    path: Assets/Scenes/Levels/Xiang-LevelDesign.unity
+    guid: 499dd3bf01f74b844b79c247ea2f1d58
+  - enabled: 1
+    path: Assets/Scenes/Levels/Goh_LevelScene.unity
+    guid: 21488691a93e35a46ab1b2ee5a8d3338
+  - enabled: 1
+    path: Assets/Scenes/Levels/Water Tunnel Racing.unity
+    guid: cc1fb096501f2984a852e66103454542
   m_configObjects: {}
