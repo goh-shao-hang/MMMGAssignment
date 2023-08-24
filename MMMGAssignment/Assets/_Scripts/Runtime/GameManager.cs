@@ -84,7 +84,7 @@ public class GameManager : Singleton<GameManager>
     private IEnumerator ReturnToMainMenuCO()
     {
         Debug.LogWarning($"Loading main menu");
-        PhotonNetwork.LoadLevel("Main Menu");
+        PhotonNetwork.LoadLevel("WinScreen");
 
         while (PhotonNetwork.LevelLoadingProgress < 1)
         {

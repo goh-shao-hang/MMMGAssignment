@@ -26,4 +26,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Levels/Water Tunnel Racing.unity
     guid: cc1fb096501f2984a852e66103454542
+  - enabled: 1
+    path: Assets/Scenes/WinScreen.unity
+    guid: 0e65fa54d75a192489a435c49e97d104
   m_configObjects: {}
