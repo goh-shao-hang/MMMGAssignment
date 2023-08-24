@@ -135,7 +135,15 @@ namespace GameCells.Player
         {
             DestroyPlayerController();
             OnPlayerWon?.Invoke();
+            photonView.RPC(nameof(RPC_PlayerWon), RpcTarget.MasterClient);
         }
+
+        [PunRPC]
+        private void RPC_PlayerWon()
+        {
+            levelManager.ServerLevelEnd();
+        }
+
 
         public void DestroyPlayerController()
         {

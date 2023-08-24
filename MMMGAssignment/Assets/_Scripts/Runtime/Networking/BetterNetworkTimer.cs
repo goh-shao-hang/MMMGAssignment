@@ -91,4 +91,9 @@ public class BetterNetworkTimer : MonoBehaviourPunCallbacks
         IsRunning = false;
         OnTimerExpired?.Invoke();
     }
+
+    public void StopTimer()
+    {
+        IsRunning = false;
+    }
 }
