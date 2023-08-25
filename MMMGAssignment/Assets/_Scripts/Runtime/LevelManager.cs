@@ -193,6 +193,8 @@ public class LevelManager : SingletonPunCallbacks<LevelManager>
 
     public void ServerLevelEnd()
     {
+        _levelTimer.StopTimer();
+
         StartCoroutine(ServerLevelEndCO());
         _photonView.RPC(nameof(RPC_LevelEnd), RpcTarget.All);
     }

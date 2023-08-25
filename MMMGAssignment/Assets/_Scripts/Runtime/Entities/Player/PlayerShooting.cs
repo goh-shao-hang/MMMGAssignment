@@ -77,12 +77,12 @@ namespace GameCells.Player
         private void Update()
         {
             //TODO DEBUG
-//#if UNITY_EDITOR
+#if UNITY_EDITOR
             if (UnityEngine.Input.GetKeyDown(KeyCode.E))
             {
                 EquipGun(!_hasGun);
             }
-//#endif
+#endif
 
             if (!_hasGun)
                 return;
